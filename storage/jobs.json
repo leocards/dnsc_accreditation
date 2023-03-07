@@ -1,0 +1,74 @@
+{
+    
+    "auth":[
+        {
+            "id": 6,
+            "name": "Admin main",
+            "roles": [9]
+        },
+        {
+            "id": 1,
+            "name": "Admin",
+            "roles": [6]
+        },
+        {
+            "id": 2,
+            "name": "User",
+            "roles": [3, 4, 5]
+        },
+        {
+            "id": 3,
+            "name": "Dean",
+            "roles": [1]
+        },
+        {
+            "id": 4,
+            "name": "Program Chairperson",
+            "roles": [2]
+        },
+        {
+            "id": 5,
+            "name": "Accreditor",
+            "roles": [7, 8]
+        }
+    ],
+    "designation":[
+        {
+            "id": 1,
+            "name": "Dean"
+        },
+        {
+            "id": 2,
+            "name": "Program Chairperson"
+        },
+        {
+            "id": 3,
+            "name": "Faculty"
+        },
+        {
+            "id": 4,
+            "name": "Staff"
+        }, 
+        {
+            "id": 5,
+            "name": "Librarian"
+        },
+        {
+            "id": 6,
+            "name": "Quality Assurance Head"
+        },
+        {
+            "id": 9,
+            "name": "Quality Assurance Staff"
+        },
+        {
+            "id": 7,
+            "name": "Self Accreditor"
+        },
+        {
+            "id": 8,
+            "name": "Accreditor"
+        }
+    ]
+
+}

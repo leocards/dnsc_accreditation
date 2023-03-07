@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities 
+{
+    @font-face {
+        font-family: Inter var;
+        src: url(./Font/Inter-VariableFont_slnt,wght.ttf);
+    }
+    @font-face {
+        font-family: Poppins;
+        src: url(./Font/Poppins-Regular.ttf);
+    }
+    *{
+        font-family: 'Poppins';
+        @apply outline-dnscGreen;
+    }
+    .Segoe {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    }
+    ::-webkit-scrollbar {
+        @apply dark:bg-secondaryDarkBg w-[10px]
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply dark:bg-white/40 rounded-3xl hover:dark:bg-white/60 bg-[#d1d5db] hover:bg-[#abaeaf]
+    }
+    ::-webkit-scrollbar-button{ 
+        @apply bg-transparent h-0 w-0; 
+    }
+    ::-ms-reveal {
+        display: none;
+    }
+    button {
+        @apply select-none
+    }
+    body {
+        @apply bg-whiteBg text-slate-600 text-sm overflow-y-auto dark:text-white/70 transition delay-700;
+    }
+    span.errorMessage {
+        @apply w-fit text-xs text-red-500
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        @apply dark:text-slate-200
+    }
+    .secondaryText {
+        @apply text-gray-400 dark:text-white/40;
+    }
+    .myshadow {
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    }
+    .vue-pdf-embed>div {
+        margin-bottom: 10px;
+        box-shadow: 0 2px 8px 4px rgba(0, 0, 0, 0.1);
+    }
+    .area_progress:before{
+        content: "";
+        position: absolute;
+        width: 80%;
+        height: 80%;
+        border-radius: 50%;
+    }
+    .app-content {
+      padding: 24px 16px;
+    }
+    .nprogress {
+        @apply z-[999999] !important
+    }
+    .inter-font {
+        font-family: 'Inter var';
+    }
+    .transition_300 {
+        @apply transition duration-300
+    }
+    .Oneline{
+        @apply overflow-hidden text-ellipsis whitespace-normal
+        line-clamp-1 break-words
+    }
+    .Twoline{
+        @apply overflow-hidden text-ellipsis whitespace-normal
+        line-clamp-2 break-words
+    }
+    .Threeline{
+        @apply overflow-hidden text-ellipsis whitespace-normal
+        line-clamp-3 break-words
+    }
+    .line-clamp-3{
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+    .line-clamp-2{
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    .line-clamp-1{
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
+    .formInput{
+        @apply  h-10 px-3 w-full outline-none dark:focus:border-dnscGreen/90 focus:border-dnscGreen/90 
+        border-slate-300 border rounded transition_300 dark:bg-secondaryDarkBg dark:border-primaryDarkBorder
+    }
+    .formInput_success{
+        @apply  h-10 px-3 w-full outline-none border-dnscGreen/90 border-slate-300 border rounded transition_300
+    }
+    .formInput_error{
+        @apply  h-10 px-3 w-full outline-none border-pink-600 border rounded transition_300 dark:bg-secondaryDarkBg
+    }
+    .textareaForm{
+        @apply formInput py-2 min-h-[4rem] max-h-[9rem] dark:bg-secondaryDarkBg dark:border-primaryDarkBorder
+    }
+    .textareaForm_error{
+        @apply formInput_error py-2 min-h-[4rem] max-h-[9rem] dark:bg-secondaryDarkBg
+    }
+    .subnavBg {
+        @apply bg-white dark:bg-secondaryDarkBg
+    }
+
+    .editable:empty:before{
+        @apply text-slate-400;
+        content: attr(placeholder);
+    }
+
+    .hover_green {
+        @apply bg-dnscGreen/10 text-dnscGreen dark:bg-dnscGreen/30;
+    }
+    
+    /* Side navigation */
+    .active-sn {
+        @apply text-white bg-dnscGreen flex items-center gap-2.5 dark:shadow-[inset_0_1px_0_0_hsl(0deg_0%_100%_/_5%)];
+    }
+    .default-sn {
+        @apply hover:dark:shadow-[inset_0_1px_0_0_hsl(0deg_0%_100%_/_5%)] hover:bg-dnscGreen/20 hover:text-dnscGreen flex items-center gap-2.5 transition_300 dark:text-white/80;
+    }
+
+    /* Buttons */
+    .button-green {
+        @apply bg-dnscGreen/90 text-white hover:bg-dnscGreen transition duration-200 hover:shadow-md;
+    }
+    .button-disabled {
+        @apply bg-black/10 text-gray-400 cursor-default pointer-events-none;
+    }
+    .button-load-disabled {
+        @apply bg-slate-200 text-slate-400 cursor-wait pointer-events-none;
+    }
+    .action-btn {
+        @apply rounded-full shrink-0 h-10 w-10 flex items-center justify-center hover:bg-dnscGreen/10 hover:text-dnscGreen transition_300 
+        hover:dark:bg-dnscGreen/30 hover:dark:text-white/80;
+    }
+    .action-btn-disabled {
+        @apply text-gray-400 pointer-events-none dark:text-white/20;
+    }
+
+    .accordionButton {
+        @apply h-7 min-w-[1.75rem] flex items-center justify-center rounded transition duration-300 disabled:action-btn-disabled
+        dark:hover:bg-dnscGreen dark:hover:text-white/80 hover:bg-dnscGreen/70 hover:text-white
+    }
+
+    /* Institute */
+    .card {
+        @apply w-full h-[4.6rem] rounded overflow-hidden;
+    }
+    .card-hover{
+        @apply hover:bg-gray-300/80 transition_300 hover:dark:bg-tertiaryDarkBg;
+    }
+    .card-select{
+        @apply bg-dnscGreen/20 transition duration-200;
+    }
+
+    .filepond--panel-root {
+        @apply dark:bg-tertiaryDarkBg bg-[#D1E4DD] !important;
+    }
+    .filepond--drop-label {
+        @apply dark:text-white/70 !important;
+    }
+
+    .accordionBg1 {
+        @apply bg-dnscGreen/20 dark:bg-dnscGreen/40 dark:text-green-400 text-dnscGreen dark:border-green-900/80 border-dnscGreen/5
+    }
+    .accordionBg2 {
+        @apply bg-dnscGreen/20 dark:bg-dnscGreen/40 dark:text-green-400 text-dnscGreen dark:border-green-900/80 border-dnscGreen/5
+    }
+    .accordionBg3 {
+        @apply bg-dnscGreen/30 dark:text-green-400 text-dnscGreen dark:border-green-500/80 border-dnscGreen/80
+    }
+}
