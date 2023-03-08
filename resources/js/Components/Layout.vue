@@ -147,7 +147,15 @@ try {
                 })
                 
                 if(storeChat.selectedUserChat.convoId == e.message.convoId){
-                    storeChat.conversation.unshift(e.message)
+                    storeChat.conversation.unshift({...e.message})
+                    axios.get('/chat/seen_msg?convoId='+storeChat.selectedUserChat.convoId).then(res => {
+                        storeChat.chatConversation.find(chat => {
+                            if(chat.seen == null && chat.convoId == res.data && authUser !== chat.sender){
+                                storeChat.chatCounter--
+                                chat.seen = 1
+                            }
+                        })
+                    })
                     storeChat.selectedUserChat.seen = 1
                 }else{
                     storeChat.chatConversation.find(chat => {

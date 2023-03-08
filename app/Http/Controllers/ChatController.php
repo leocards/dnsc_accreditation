@@ -107,7 +107,7 @@ class ChatController extends Controller
             $col = collect([
                 "convoId" => $mess->convoId,
                 "created_at" => $mess->created_at,
-                "id" => $mess->sender,
+                "id" => Auth::id(),//$request->user,//$mess->sender,
                 "message" => $mess->message,
                 "sender" => $mess->sender,
                 "seen" => $mess->seen,
@@ -121,6 +121,7 @@ class ChatController extends Controller
             
             $col['name'] = User::find($request->user)->getFullName();
             $col['avatar'] = User::find($request->user)->avatar;
+            $col['id'] = $request->user;
 
             DB::commit();
             return response()->json($col);
@@ -154,8 +155,18 @@ class ChatController extends Controller
                 ChatConversation::where('convoId', $convoId->id)
                 ->orderByDesc('created_at')
                 ->paginate(30)
-                ->map(function ($convo) {
-                    return $convo;
+                ->map(function ($convo) use ($convoId, $id) {
+                    return collect([
+                        "convoId" => $convoId->id,
+                        "created_at" => $convo->created_at,
+                        "id" => intval($id),//Auth::id() == $convoId->sender ? $convoId->receiver : $convoId->sender,//$request->user,//$mess->sender,
+                        "message" => $convo->message,
+                        "sender" => $convo->sender,
+                        "seen" => $convo->seen,
+                        "updated_at" => $convo->updated_at,
+                        "name" => User::find($id)->getFullName(),
+                    ]);
+                    //return $convo;
                 })
             );
 

@@ -97,7 +97,7 @@ const message = mess => {
                 message: mess
             }).then(res => {
                 let data = res.data
-                storeChat.conversation.unshift(res.data)
+                storeChat.conversation.unshift({...data})
                 'convoId' in storeChat.selectedUserChat ? '' : storeChat.selectedUserChat.convoId = data.convoId
                 
                 let isExist = storeChat.chatConversation.find((val, index) => {

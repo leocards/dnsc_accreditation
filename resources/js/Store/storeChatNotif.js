@@ -8,7 +8,7 @@ export const useChatStore = defineStore('Chat', () => {
     const loaded = ref(false)
     const chatCounter = ref(0)
     const isOpenConvo = ref(false)
-    const conversation = ref([])
+    const conversation = ref(new Array())
     const isOpenMessages = ref(false)
     const chatConversation = ref(null)
     const selectedUserChat = ref(null)
@@ -22,7 +22,7 @@ export const useChatStore = defineStore('Chat', () => {
         selectedUserChat.value = user
         lastConversation.value = false
         page.value = 1
-        conversation.value = []
+        conversation.value = new Array()
         send_recieve.value = 'sender' in user ? (user.sender == authUser?user.reciever:user.sender) : user.id
         getMessages(user.id)
         try {
