@@ -13,12 +13,13 @@
                     <div class="ml-2 mr-1 whitespace-nowrap max-sm:hidden" v-if="$page.props.createAs === 2">Create Area</div>
                 </CreateButton>
             </div>
-            <BackButton v-if="$page.props.crumbs.length !== 0" @click="backRoute" />
+            <BackButton v-if="$page.props.crumbs.length !== 0" @click="backRoute" title="Back" />
             <Crumbs :crumbs="$page.props.crumbs" @handleCrumbRoute="roteTo" :current="$page.props.current" />
 
-            <TagButton @click="setTagProgram" :disabled="($page.props.current?($page.props.current.category != 'inst'? true:!storeInstrument.selected):'')" />
-            <EditButton @click="openUpdate" :disabled="!storeInstrument.selected || category == 'ind'" />
-            <InfoButton :disabled="!storeInstrument.selected || category == 'ind'" @click="isInstInfo = true" />
+            <TagButton @click="setTagProgram" title="Tag program"
+            :disabled="($page.props.current?($page.props.current.category == 'inst' && !storeInstrument.selected?true:$page.props.current.category == 'lvl'?false:!storeInstrument.selected):true)" />
+            <EditButton @click="openUpdate" title="Edit" :disabled="!storeInstrument.selected || category == 'ind'" />
+            <InfoButton title="Details" :disabled="!storeInstrument.selected || category == 'ind'" @click="isInstInfo = true" />
             <BlockButton @click="isExcludeArea = true" :disabled="!storeInstrument.selected || category == 'lvl' || category == 'inst'" title="Exclude from computation" />
         </div>
     </template>
@@ -27,7 +28,7 @@
         <InstrumentCard 
             :instrument="instrument" 
             :selected="storeInstrument.selected"
-            @click="getSelect(instrument)"
+            @handleClick="getSelect(instrument)"
             @dblclick="route(instrument.id, $page.props.createAs, $page.props.current)"
             @handleRoute="route(instrument.id, $page.props.createAs, $page.props.current)"
             v-for="instrument in $page.props.instruments"
@@ -88,7 +89,7 @@
     <TagProgramModal 
         @handle-close="closeTagProgram"
         v-if="isTagProgram"
-        :level="storeInstrument.updateSelect"
+        :level="$page.props.current?$page.props.current.category == 'lvl'?$page.props.current:storeInstrument.updateSelect:storeInstrument.updateSelect"
     />
 
     <ExcludeModal

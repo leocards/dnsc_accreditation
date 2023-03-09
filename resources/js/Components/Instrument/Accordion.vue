@@ -16,12 +16,14 @@
             <div class="w-fit shrink-0 flex gap-2">
                 <UnblockButton @click="include" v-if="inst.exclude_rate" title="Remove exclude from computation" />
                 <AddButton 
+                    title="Add"
                     v-if="inst.category != 'param'" 
                     :active="(openDropDown || (storeInstrument.selected == inst.id?true:false))" 
                     @click="getCreate(inst)"
                 />
                 <DownButton 
-                    @click="openDropDown = !openDropDown" 
+                    title="Show more"
+                    @click="openDropDown = !openDropDown"
                     :active="openDropDown || (storeInstrument.selected == inst.id?true:false)" 
                     :disabled="[...storeInstrument.instruments.filter(({parent}) => { return parent == props.inst.id})].length === 0"
                 />

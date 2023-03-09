@@ -151,7 +151,6 @@ try {
                     axios.get('/chat/seen_msg?convoId='+storeChat.selectedUserChat.convoId).then(res => {
                         storeChat.chatConversation.find(chat => {
                             if(chat.seen == null && chat.convoId == res.data && authUser !== chat.sender){
-                                storeChat.chatCounter--
                                 chat.seen = 1
                             }
                         })

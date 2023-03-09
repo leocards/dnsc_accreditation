@@ -1,6 +1,6 @@
 <template>
     <InstCard>
-        <div class="w-full h-full p-2.5 px-3 select-none flex items-center" :id="`instrument${instrument.id}`"
+        <div class="w-full h-full p-2.5 px-3 select-none flex items-center" @click.self="$emit('handleClick')" :id="`instrument${instrument.id}`"
         :class="[selected === instrument.id?'card-select':'card-hover']">
             <div class="pointer-events-none grow">
                 <div>{{instrument.title}}</div>

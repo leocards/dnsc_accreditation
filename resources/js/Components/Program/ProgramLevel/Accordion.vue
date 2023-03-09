@@ -78,6 +78,7 @@ import CommentButton from '../../Buttons/Comment.vue'
 import { ref } from '@vue/reactivity'
 import { useProglevelStore } from '../../../Store/storeProgramLvl'
 import { useDocumentStore } from '../../../Store/storeDocument'
+import { onUnmounted } from 'vue'
 
 const storeProgLvl = useProglevelStore()
 const storeDocument = useDocumentStore()
@@ -111,5 +112,9 @@ const getInsInfo = info => {
         closeOptions()
     }, 100)
 }
+
+onUnmounted(()=>{
+    storeProgLvl.selected = null
+})
 
 </script>
