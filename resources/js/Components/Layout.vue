@@ -167,7 +167,7 @@ try {
                 let isFound = storeChat.chatConversation.find((convo, index) => {
                     if(convo.convoId === e.message.convoId)
                     {
-                        if(convo.seen)
+                        if(!convo.seen)
                             storeChat.chatCounter++
 
                         appendIfExist(index, e.message)
