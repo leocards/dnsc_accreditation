@@ -37,7 +37,7 @@
             <div class="absolute top-0 left-2.5 h-full w-5 border-l-2 border-green-600" 
             v-if="[...storeInstrument.instruments.filter(({parent}) => { return parent == props.inst.id})].length-1 != index"></div>
             <div class="pt-1.5">
-                <Accordion :inst="inst" @handleSelect="getSelected" @handleCreate="getCreate" :area="area"/>
+                <Accordion :inst="inst" @handleSelect="getSelected" @handleCreate="getCreate" @handleUnselect="unselect()" :area="area"/>
             </div>
         </div>
     </AccordionContainer>
@@ -52,6 +52,7 @@ import UnblockButton from '../Buttons/Unblock.vue'
 import { ref } from '@vue/reactivity'
 import { useInstrumentStore } from '../../Store/storeInstrument'
 import { Inertia } from '@inertiajs/inertia'
+import { onUnmounted } from 'vue'
 
 const storeInstrument = useInstrumentStore()
 
@@ -59,7 +60,7 @@ const props = defineProps({
     inst: Object,
     area: Number,
 })
-const emits = defineEmits(['handleSelect', 'handleCreate'])
+const emits = defineEmits(['handleSelect', 'handleCreate', 'handleUnselect'])
 
 const openDropDown = ref(false)
 
@@ -72,9 +73,15 @@ const getCreate = val => {
     emits('handleCreate', val)
     storeInstrument.area = props.area
 }
+const unselect = () => {
+    emits('handleUnselect')
+}
 
 const include = () => {
     Inertia.get(`/accreditation/instrument/exclude/${props.inst.id}?include=true`)
 }
 
+onUnmounted(()=>{
+    unselect()
+})
 </script>

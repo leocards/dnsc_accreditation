@@ -42,7 +42,7 @@
             v-for="(children, index) in instruments"
             :key="index"
         >
-            <Accordion :inst="children" :area="children.id" @handleSelect="getSelect" @handle-create="getCreateBtn"/>
+            <Accordion :inst="children" :area="children.id" @handleSelect="getSelect" @handleUnselect="closeGetSelect" @handle-create="getCreateBtn"/>
         </div>
     </div>
 
@@ -178,6 +178,11 @@ const getSelect = (inst) => {
     category.value = inst.category
     storeInstrument.selected = inst.id
     storeInstrument.updateSelect = inst
+}
+const closeGetSelect = () => {
+    category.value = null
+    storeInstrument.selected = null
+    storeInstrument.updateSelect = null
 }
 
 const setTagProgram = () => {
