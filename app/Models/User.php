@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return "{$this->first_name} {$this->last_name}";
     }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
 }

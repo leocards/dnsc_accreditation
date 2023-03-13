@@ -385,7 +385,7 @@ class UserController extends Controller
             $user = User::where('username', 'LIKE', "%{$search}%")
                 ->orWhere('last_name', 'LIKE', "%{$search}%")
                 ->orWhere('first_name', 'LIKE', "%{$search}%")
-                ->get(['id', 'avatar', 'first_name', 'last_name']);
+                ->get(['id', 'avatar', 'first_name', 'last_name', 'status']);
         else
             $user = User::all();
 
@@ -393,7 +393,8 @@ class UserController extends Controller
             return collect([
                 'id' => $value->id,
                 'name' => $value->getFullName(),
-                'avatar' => $value->avatar
+                'avatar' => $value->avatar,
+                'status' => $value->status
             ]);
         });
     }

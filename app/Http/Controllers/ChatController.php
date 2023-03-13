@@ -37,6 +37,7 @@ class ChatController extends Controller
                     $receiver->created_at = $chat->created_at;
                     $receiver->updated_at = $chat->updated_at;
                     $receiver->name = $receiver->getFullName();
+                    $receiver->status = $receiver->getStatus();
 
                     unset($receiver->first_name, $receiver->auth, $receiver->instituteId, $receiver->programId, $receiver->last_name, $receiver->designation);
 
@@ -55,6 +56,7 @@ class ChatController extends Controller
                 $sender->sender = $chat->sender;
                 $sender->seen = $convo->seen;
                 $sender->name = $sender->getFullName();
+                $sender->status = $sender->getStatus();
 
                 unset($sender->first_name, $sender->auth, $sender->instituteId, $sender->programId, $sender->last_name, $sender->designation);
 
@@ -113,6 +115,7 @@ class ChatController extends Controller
                 "seen" => $mess->seen,
                 "updated_at" => $mess->updated_at,
                 "receiver" => $request->user,
+                "status" => User::find($request->user)->getStatus(),
                 "name" => $hasConvo?$hasConvo->receivers->getFullName():User::find(Auth::id())->getFullName(),
                 "avatar" => $hasConvo?$hasConvo->receivers->only('avatar')['avatar']:Auth::user()->avatar
             ]);
@@ -180,7 +183,7 @@ class ChatController extends Controller
             ->map(function ($user) {
                 $user->name = $user->first_name.' '.$user->last_name;
 
-                return $user->only('id', 'name', 'avatar');
+                return $user->only('id', 'name', 'avatar', 'status');
             })
         );
     }

@@ -26,7 +26,7 @@ trait UserTrait {
                         $query->whereNot('auth', 5)
                             ->where('id', '!=', Auth::id());
                     })
-                    ->get(['id', 'first_name', 'last_name', 'auth', 'designation', 'avatar']);
+                    ->get(['id', 'first_name', 'last_name', 'auth', 'designation', 'avatar', 'status']);
     }
 
     public function userLog($accred, $document, $instrumentId, $details)

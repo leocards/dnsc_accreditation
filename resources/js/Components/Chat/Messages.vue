@@ -28,8 +28,11 @@
 
                     <div class="w-full p-1.5 pb-1">
                         <Card v-for="user in storeChat.chatConversation" @click="storeChat.getUserConversation(user, $page.props.user.userId)" :sender="user.sender" :seen="user.seen">
-                            <div class="w-14 h-14 shrink-0 rounded-full overflow-hidden bg-gray-400/30">
-                                <Avatar :avatar="user.avatar" />
+                            <div class="w-14 h-14 shrink-0 rounded-full bg-gray-400/30 relative">
+                                <div class="w-full h-full rounded-full overflow-hidden">
+                                    <Avatar :avatar="user.avatar" />
+                                </div>
+                                <div class="w-3 h-3 bottom-1 right-px rounded-full bg-green-600 absolute" v-if="user.status"></div>
                             </div>
                             <div class="ml-2 p-1 flex flex-col justify-center grow select-none">
                                 <div :class="{'font-semibold text-dnscGreen':(!user.seen && user.sender !== $page.props.user.userId)}">{{user.name}}</div>
@@ -62,8 +65,11 @@
                     
                     <div class="w-full p-1.5 pb-1">
                         <Card v-for="user in searchResult" @click="storeChat.getUserConversation(user, $page.props.user.userId)" :seen="1" :search="true">
-                            <div class="w-14 h-14 shrink-0 rounded-full overflow-hidden bg-gray-400/30">
-                                <Avatar :avatar="user.avatar" />
+                            <div class="w-14 h-14 shrink-0 rounded-full bg-gray-400/30 relative">
+                                <div class="w-full h-full rounded-full overflow-hidden">
+                                    <Avatar :avatar="user.avatar" />
+                                </div>
+                                <div class="w-3 h-3 bottom-1 right-px rounded-full bg-green-600 absolute" v-if="user.status"></div>
                             </div>  
                             <div class="ml-2 p-1 flex flex-col justify-center grow select-none">
                                 <div class="">{{user.name}}</div>

@@ -32,8 +32,11 @@
         <Card v-for="user in $page.props.users" :id="user.id" :selected="selected" @click="selectUser(user)">
 
             <div class="h-[calc(4rem-0.75rem)] w-full flex items-center">
-                <div class="w-12 h-12 rounded-full overflow-hidden shrink-0">
-                    <Avatar :avatar="user.avatar" />
+                <div class="w-12 h-12 rounded-full relative shrink-0">
+                    <div class="w-full h-full rounded-full overflow-hidden">
+                        <Avatar :avatar="user.avatar" />
+                    </div>
+                    <div class="w-3 h-3 bottom-1 right-px rounded-full bg-green-600 absolute" v-if="user.status"></div>
                 </div>
                 <div class="select-none ml-2 h-fit">
                     <div class="Twoline">{{user.name}}</div>

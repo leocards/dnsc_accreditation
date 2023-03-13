@@ -45,9 +45,13 @@ class AuthController extends Controller
         try {
             $validUsername = User::where('username', $request->username)->first();
 
-            if(Auth::attempt($credentials))
+            if(Auth::attempt($credentials)){
+                $online = User::find(Auth::id());
+                $online->status = 1;
+                $online->save();
+
                 return back()->with('success', true);
-            else
+            }else
                 return back()->with('error', 'invalid');
 
         }catch(\Throwable $e){
@@ -170,6 +174,9 @@ class AuthController extends Controller
 
     public function logOut()
     {
+        $offline = User::find(Auth::id());
+        $offline->status = null;
+        $offline->save();
         Auth::logout();
 
         return redirect()->route('index');

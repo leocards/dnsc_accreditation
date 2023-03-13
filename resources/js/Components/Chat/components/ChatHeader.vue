@@ -2,8 +2,11 @@
     <div class="h-12 shrink-0 shadow dark:border-b dark:border-gray-100/5">
         <div class="w-full h-full flex items-center px-1">
 
-            <div class="w-8 h-8 shrink-0 rounded-full overflow-hidden">
-                <Avatar :avatar="user.avatar" />
+            <div class="w-8 h-8 shrink-0 rounded-full relative">
+                <div class="w-full h-full rounded-full overflow-hidden">
+                    <Avatar :avatar="user.avatar" />
+                </div>
+                <div class="w-2 h-2 bottom-1 right-0 rounded-full bg-green-600 absolute" v-if="user.status"></div>
             </div>
 
             <div class="Oneline ml-2">
