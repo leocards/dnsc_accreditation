@@ -126,6 +126,7 @@ const validateDocument = review => {
             if(docu.id == selectedDocument.value.id)
                 return docu.review = review
         })
+        document.getElementById('optionContainer').classList.add('hidden')
     }).catch(error => {
          console.log(error);
     })

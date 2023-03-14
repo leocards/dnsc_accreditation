@@ -222,7 +222,7 @@ class DocumentController extends Controller
                 'isCurrent' => true
             ]);
 
-            DocumentCurrentVersion::create([
+            $currentDocu = DocumentCurrentVersion::create([
                 'accredlvl' => $request->accredlvl,
                 'instrumentId' => $request->instrument,
                 'documentId' => $document->id,
@@ -230,8 +230,20 @@ class DocumentController extends Controller
 
             $request->documentType == 'link' ? '' : $this->processFile($file->folder, $file->file);
 
-            //log user activity
+            $areaTfc = $this->getArea($request->instrument)->last()->id;
+            $tfc = AreaAssign::where('areaId', $areaTfc)->where('levelId', $request->accredlvl)->where('role', 'tfc')->first();
+
+            $docuUpload = collect([
+                "userId" => $tfc->userId,
+                "docuCurrId" => $currentDocu->id,
+                "details" => 'Uploaded new document '. $request->title
+                
+            ]);
+
+            //log user activity getArea
             $this->userLog($request->accredlvl, $document->id, $request->instrument, 'uploaded this document');
+
+            $this->DocumentUpload($docuUpload);
 
             DB::commit(); 
             return back()->with('success', 'Uploaded successfully');

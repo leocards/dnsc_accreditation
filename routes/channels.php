@@ -36,3 +36,7 @@ Broadcast::channel('attach.{id}', function ($user, $id) {
 Broadcast::channel('UpdateAccred.{auth}', function ($user, $auth) {
     return (int) $user->auth == (int) $auth;
 });
+
+Broadcast::channel('docupload.{id}', function ($user, $id) {
+    return (int) $user->id == (int) $id;
+});

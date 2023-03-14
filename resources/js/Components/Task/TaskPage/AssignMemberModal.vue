@@ -14,7 +14,7 @@
             <div class="text-center dark:text-white/50">No Assigned member</div>
             <div class="flex justify-center mt-3">
                 <button 
-                    class="p-2 px-3 bg-dnscGreen/90 rounded hover:bg-dnscGreen hover:shadow-md dark:shadow-[inset_0_1px_0_0_hsl(0deg_0%_100%_/_5%)] actionBtn"
+                    class="p-2 px-3 bg-dnscGreen/90 rounded text-white transition_300 hover:bg-dnscGreen hover:shadow-md dark:shadow-[inset_0_1px_0_0_hsl(0deg_0%_100%_/_5%)] actionBtn"
                     @click="isAssign = true"
                 >Assign</button>
             </div>

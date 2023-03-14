@@ -193,7 +193,6 @@ try {
             storeChat.notifications.unshift(e.comment)
             storeChat.notifCounter++
         });
-
 } catch (e) {
     console.log(e)
 }
@@ -201,8 +200,20 @@ try {
 try {
     Echo.private('review.'+props.user.userId)
         .listen('DocumentReview', (e) => {
-            console.log(e)
+            //console.log(e)
             storeChat.notifications.unshift(e.review)
+            storeChat.notifCounter++
+        });
+
+} catch (e) {
+    console.log(e)
+}
+
+try {
+    Echo.private('docupload.'+props.user.userId)
+        .listen('DocumentUpload', (e) => {
+            //console.log(e)
+            storeChat.notifications.unshift(e.upload)
             storeChat.notifCounter++
         });
 
