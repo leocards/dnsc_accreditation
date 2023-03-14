@@ -7,6 +7,7 @@ use App\Models\Instrument;
 use App\Models\Progress;
 use App\Models\SelfSurvey;
 use App\Models\SelfSurveyRate;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -56,8 +57,13 @@ class AccreditationController extends Controller
     public function tagProgram(Request $request)
     {
         $request->validate([
-            'date_of_self_survey' => ['required', 'date'],
-            'date_of_actual_survey' => ['required', 'date']
+            'date_of_self_survey' => ['required', 'date', 'before:date_of_actual_survey', 'not_in:'.Carbon::now()->format('Y-m-d')],
+            'date_of_actual_survey' => ['required', 'date', 'after:date_of_self_survey', 'not_in:'.Carbon::now()->format('Y-m-d')]
+        ],[
+            'date_of_self_survey.before' => 'date should not be the same',
+            'date_of_actual_survey.after' => 'date should not be the same',
+            'date_of_self_survey.not_in' => 'date should not be today',
+            'date_of_actual_survey.not_in' => 'date should not be today',
         ]);
 
         DB::beginTransaction();
@@ -185,7 +191,7 @@ class AccreditationController extends Controller
             $accred->restrict = null;
             $accred->save();
 
-            $this->saveRates($objAccred->id);
+            //$this->saveRates($objAccred->id);
 
             DB::commit();
             return back()->with('success', $objAccred->program.' '.$objAccred->title.' survey is closed');
@@ -241,9 +247,13 @@ class AccreditationController extends Controller
     {
         try {
 
-            $confirm = Accreditation::find($request->id);
-            $confirm->verified = true;
-            $confirm->save();
+            DB::transaction(function() use ($request) {
+                $confirm = Accreditation::find($request->id);
+                $confirm->verified = true;
+                $confirm->save();
+
+                $this->saveRates($request->id);
+            });
 
             return back()->with('success', 'Verified');
         } catch (\Throwable $th) {

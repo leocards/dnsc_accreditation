@@ -1,9 +1,9 @@
 <template>
-    <div class="mx-auto z-30 lg:ml-[] min-h-[20rem] md:w-[30rem] max-sm:w-[26rem] subnavBg rounded-lg py-6 px-8 my-8 dark:shadow-[inset_0_1px_0_0_hsl(0deg_0%_100%_/_5%)]">
+    <div class="mx-auto z-30 lg:ml-[] min-h-[20rem] md:w-[30rem] max-sm:w-[26rem] subnavBg rounded-lg py-6 px-8 my-8 dark:shadow-[inset_0_1px_0_0_hsl(0deg_0%_100%_/_5%)] relative">
         <div class="w-full text-center pb-2 text-lg">
             <span class="font-semibold text-dnscGreen">Pre registration </span>
         </div>
-
+        <SuccesReg v-if="successReg" />
         <form @submit.prevent="submit">
             <div class=" mt-1">
                 <label for="first_name">First name</label>
@@ -63,6 +63,7 @@
 import Submit from '../Buttons/Submit.vue'
 import EyeOpen from '../Icons/eyeOpenIcon.vue'
 import EyeClose from '../Icons/eyeCloseIcon.vue'
+import SuccesReg from './RegistrationConfirmation.vue'
 import { useForm } from '@inertiajs/inertia-vue3'
 import { ref } from '@vue/reactivity'
 import { Inertia } from '@inertiajs/inertia'
@@ -78,6 +79,7 @@ const Register = useForm({
     password: null,
     confirm_password: null,
 })
+const successReg = ref(false)
 
 const togglePass = () => {
     if(ispasswordHidden.value)
@@ -100,6 +102,16 @@ const toggleCPass = () => {
     }
 }
 
+const succesRegistration = success => {
+    if(success){
+        successReg.value = true
+
+        setTimeout(()=>{
+            successReg.value = false
+        }, 5000)
+    }
+}
+
 const submit = () => {
     Register.post('/pre-register', {
         onSuccess: page => {
@@ -107,7 +119,8 @@ const submit = () => {
             if(page.props.flash.success){
                 Register.reset()
                 Register.clearErrors()
-                Inertia.get('/index')
+                //Inertia.get('/index')
+                succesRegistration(true)
             }
         },
         onError: err => {

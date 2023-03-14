@@ -122,7 +122,7 @@ class InstrumentController extends Controller
             $request->validate([
                 'indicator'=>['required'],
                 'indicator_label'=>['required'],
-                'evidence_to_attach'=>['required'],
+                //'evidence_to_attach'=>['required'],
             ]);
             if($id)
             {

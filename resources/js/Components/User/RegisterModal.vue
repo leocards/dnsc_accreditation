@@ -4,7 +4,7 @@
             Register
         </template>
 
-        <form @submit.prevent="submit" v-if="!isLoading">
+        <form class="max-w-[30rem]" @submit.prevent="submit" v-if="!isLoading">
             <div class="border border-slate-300/80 dark:border-primaryDarkBorder p-1 rounded-md mt-3 mb-6">
                 <div class="bg-black/5 dark:bg-white/10 rounded p-3 text-center">
                     {{user.name}}

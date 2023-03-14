@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 
@@ -352,7 +353,22 @@ class UserController extends Controller
     function validateUser(Request $request)
     {
         $request->validate([
-            'designation' => ['required']
+            'designation' => [
+                'required', 
+                Rule::unique('users')->where(function ($query) use ($request) {
+                    if($request->designation == 2)
+                        return $query
+                            ->where('designation', 2)
+                            ->where('programId', $request->program)
+                            ->where('instituteId', $request->institute);
+                    else
+                        return $query
+                            ->where('designation', 1)
+                            ->where('instituteId', $request->institute);
+                })
+            ],
+        ],[
+            'designation.unique' => 'The designation with same institute is already taken'
         ]);
 
         $roles1 = collect([2, 3]);
