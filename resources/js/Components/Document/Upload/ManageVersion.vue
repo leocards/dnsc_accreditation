@@ -97,6 +97,8 @@ const setOldToCurrent = () => {
         newCurrent: selectedVersion.value
     }, {
         onSuccess: page => {
+            if(page.props.flash.success)
+                emits('handleClose')
             //console.log(page.props.flash.error)
         }
     })

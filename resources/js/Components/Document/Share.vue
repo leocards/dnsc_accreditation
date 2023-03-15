@@ -97,13 +97,14 @@ watch(modelValue, throttle((search) => {
     else
         axios.get(`/user/search/shareWith/${search}`)
         .then(res => {
-            searchResult.value = res.data.filter(({id}) => !sharedWith.value.some(user => user.id === id ))
+            let filtered = res.data.filter(({id}) => !sharedWith.value.some(user => user.id === id ))
+            searchResult.value = filtered.filter(({id}) => id != props.document.userId)
         })
 
 }, 900))
 
 const addUser = user => {
-    sharedWith.value.push(user)
+    //sharedWith.value.push(user)
 }
 
 const share = user => {
