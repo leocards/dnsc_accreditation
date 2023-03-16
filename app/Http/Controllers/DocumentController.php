@@ -243,7 +243,8 @@ class DocumentController extends Controller
             //log user activity getArea
             $this->userLog($request->accredlvl, $document->id, $request->instrument, 'uploaded this document');
 
-            $this->DocumentUpload($docuUpload);
+            if($tfc->userId != Auth::id())
+                $this->DocumentUpload($docuUpload);
 
             DB::commit(); 
             return back()->with('success', 'Uploaded successfully');
@@ -526,15 +527,21 @@ class DocumentController extends Controller
         try {
 
             DB::transaction(function () use ($request) {
-                $remove = DocumentCurrentVersion::find($request->id);
-                $remove->isRemoved = true;
-                $remove->save();
+                if($request->isAttached)
+                {
+                    AttachedDocument::where('id', $request->isAttached)
+                        ->update(['isRemoved' => true]);
+                }else{
+                    $remove = DocumentCurrentVersion::find($request->id);
+                    $remove->isRemoved = true;
+                    $remove->save();
 
-                Share::where('documentId', $request->id)
-                    ->update(['isRemoved' => true]);
-                
-                AttachedDocument::where('documentId', $request->id)
-                    ->update(['isRemoved' => true]);
+                    Share::where('documentId', $request->id)
+                        ->update(['isRemoved' => true]);
+                    
+                    AttachedDocument::where('documentId', $request->id)
+                        ->update(['isRemoved' => true]);
+                }
 
             });
 

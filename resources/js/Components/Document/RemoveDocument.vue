@@ -22,7 +22,8 @@ const storeDocument = useDocumentStore()
 
 const deleteDocu = () => {
     Inertia.post('/document/remove', {
-        id: storeDocument.setDocuToRemove.docuCurrentId
+        id: storeDocument.setDocuToRemove.docuCurrentId,
+        isAttached: 'isAttached' in storeDocument.setDocuToRemove ? storeDocument.setDocuToRemove.isAttached : null
     }, {
         onSuccess: page => {
             if(page.props.flash.success){

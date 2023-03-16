@@ -126,6 +126,9 @@ trait InstrumentsTrait {
         $document = $doc->map(function ($docu) {
             $document = $docu->get_document;
             $document->docuCurrentId = $docu->id;
+            if(isset($docu->attachedId))
+                $document->isAttached = $docu->attachedId;
+
             return $document;
         })->map(function ($docs) {
             $docu = $docs;
@@ -180,12 +183,13 @@ trait InstrumentsTrait {
         ->whereNull('ad.isRemoved')
         ->get([
             'document_current_versions.id', 
+            'ad.id as attachedId',
             'ad.accredlvl', 
             'ad.instrumentId', 
             'document_current_versions.documentId', 
             'document_current_versions.isRemoved', 
             'document_current_versions.created_at', 
-            'document_current_versions.updated_at'
+            'document_current_versions.updated_at',
         ]);
     }
 }
