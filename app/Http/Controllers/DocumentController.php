@@ -243,7 +243,7 @@ class DocumentController extends Controller
             //log user activity getArea
             $this->userLog($request->accredlvl, $document->id, $request->instrument, 'uploaded this document');
 
-            if($tfc->userId != Auth::id())
+            if($tfc->userId != Auth::id() && $document->userId != Auth::id())
                 $this->DocumentUpload($docuUpload);
 
             DB::commit(); 
