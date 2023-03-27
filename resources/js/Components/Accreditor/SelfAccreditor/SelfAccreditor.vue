@@ -30,6 +30,7 @@
         />
 
         <DocumentAside
+            :user="$page.props.user.userId"
             :accredlvl="$page.props.accred.id"
             :top="'top-[4rem] h-[calc(100vh-4.5rem)]'"
             :instrument="storeAccreditor.selectedInst"

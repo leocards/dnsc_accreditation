@@ -91,8 +91,10 @@
             :instrument="selected"
             :accredlvl="$page.props.currentlvl.accredId"
             v-if="isDocument && storeProgLvl.selected"
+            @handleEdit="editDocu"
             @handleClose="CloseDocument"
             @handleView="viewDocument"
+            @handleManageVersion="getManageVersion"
         />
 
         <InstrumentAside 
@@ -125,10 +127,13 @@
     />
 
     <DocumentUploadModal
+        :isEdit="isEdit"
+        :document="selectedDocu"
         :instrument="selected"
+        :isNewVersion="isNewVersion"
         :accredlvl="$page.props.currentlvl.accredId"
         v-if="storeProgLvl.selected && isUpload"
-        @handleClose="isUpload = false"
+        @handleClose="closeUploadModal"
     />
 
     <DocumentViewerModal
@@ -137,6 +142,13 @@
         :accredlvl="$page.props.currentlvl.accredId"
         v-if="openDocument && storeProgLvl.selected"
         @handleClose="closeViewDocument"
+    />
+
+    <ManageVersionModal
+        :document="selectedDocu"
+        v-if="isManageVersion && selectedDocu && storeProgLvl.selected"
+        @handleClose="isManageVersion = false"
+        @handleNewVersion="uploadNewVersion"
     />
 
 </Layout>
@@ -161,6 +173,7 @@ import Card from '../Components/Program/ProgramLevel/InstrumentCard.vue'
 import InstrumentAside from '../Components/Instrument/InstrumentAside.vue'
 import DocumentAside from '../Components/Program/ProgramLevel/DocumentAside.vue'
 import DocumentViewerModal from '../Components/Document/DocumentViewerModal.vue'
+import ManageVersionModal from '../Components/Document/Upload/ManageVersion.vue'
 import DocumentUploadModal from '../Components/Document/Upload/DocumentModal.vue'
 import FacultyList from '../Components/Program/ProgramLevel/FacultyListModal.vue'
 import InstrumentComment from '../Components/Program/ProgramLevel/InstrumentComment.vue'
@@ -173,8 +186,10 @@ import myMethod from '../Store/Methods'
 
 const storeProgLvl = useProglevelStore()
 
+const isEdit = ref(false)
 const selected = ref(null)//Object
 const category = ref(null)
+const selectedDocu = ref(null) // for edit
 const openFacultyStaff = ref(false)
 const isAssignTf = ref(false)
 const isAssignSA = ref(false)
@@ -184,6 +199,8 @@ const isComment = ref(false)
 const isDocument = ref(false)
 const openDocument = ref(false)
 const isInstInfo = ref(false)
+const isNewVersion = ref(false)
+const isManageVersion = ref(false)
 
 const routeInstrument = (program, level, instrument) => {
     storeProgLvl.selected = null
@@ -202,6 +219,34 @@ const getSelect = (inst) => {
     category.value = inst.category
     storeProgLvl.selected = inst.id
     storeProgLvl.updateSelect = inst
+}
+const editDocu = docu => {
+    isEdit.value = true
+    isUpload.value = true
+    selectedDocu.value = docu
+}
+const closeUploadModal = (res=false) => {
+    isUpload.value = false
+    //isNewVersion.value = false
+    if(res){
+        CloseDocument()
+        isEdit.value = false
+    }else{
+        isEdit.value ? isEdit.value = false : '';
+        isNewVersion.value ? isNewVersion.value = false : '';
+    }
+
+    //storeLayout.keepScrollHidden = false
+}
+const uploadNewVersion = () => {
+    isUpload.value = true
+    isNewVersion.value = true
+    isManageVersion.value = false
+    //storeLayout.keepScrollHidden = true
+}
+const getManageVersion = docu => {
+    selectedDocu.value = docu
+    isManageVersion.value = true
 }
 const getInstrumentComment = inst => {
     getSelect(inst)

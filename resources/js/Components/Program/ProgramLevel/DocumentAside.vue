@@ -17,7 +17,7 @@
                     selectedDocument.id == document.id ? 'bg-dnscGreen/20 dark:bg-dnscGreen/70' : 'bg-whiteBg dark:bg-tertiaryDarkBg/40 hover:bg-gray-300/80 dark:hover:bg-white/10':
                     'bg-whiteBg dark:bg-tertiaryDarkBg/40 hover:bg-gray-300/80 dark:hover:bg-white/10')]"
                 @click.self="viewDocument(index)" v-for="(document, index) in storeDocument.documents"
-                @contextmenu="selectDocu(document, index)"
+                @contextmenu="selectDocu(document, index, $page.props.user.auth)"
             >
                 <div class="grow flex items-center px-1.5 pointer-events-none">
                     <div class="grow">
@@ -53,11 +53,12 @@
 
         </div>
         
-        <Teleport to='body'>
+        <Teleport to='body' v-if="auth_ != 5">
             <Options
                 :selectedDocument="selectedDocument"
                 :isMember="role"
                 :isReview="(selectedDocument?selectedDocument.userId == $page.props.user.userId:false)"
+                v-if="auth_ != 5"
                 @handleReview="validateDocument"
                 @handleViewDocument="viewFromOptions"
                 @handleEdit="$emit('handleEdit', selectedDocument)"
@@ -98,6 +99,7 @@ const emits = defineEmits([
     'handleShare'
 ])
 
+const auth_ = ref(null)
 const documentIndex = ref(null)
 const documents = ref(false)
 const contextOption = ref(null)
@@ -109,9 +111,12 @@ const viewDocument = doc => {
     emits('handleView')
     storeDocument.selectDocument(doc)
 }
-const selectDocu = (docu, index) => {
-    selectedDocument.value = docu
-    documentIndex.value = index
+const selectDocu = (docu, index, auth = null) => {
+    auth_.value = auth
+    if(auth != 5){
+        selectedDocument.value = docu
+        documentIndex.value = index
+    }
 }
 const viewFromOptions = () => {
     emits('handleView')

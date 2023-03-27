@@ -207,6 +207,7 @@ const closeUploadModal = (res=false) => {
     isUpload.value = false
     if(res){
         closeDocument()
+        isEdit.value = false
     }else{
         isEdit.value ? isEdit.value = false : '';
         isNewVersion.value ? isNewVersion.value = false : '';
