@@ -237,7 +237,16 @@ const K_means = (mean, dataset, maxIteration = 100) => {
         //return clusters
     }
     iterations.value
+
     return iterate(mean, dataset, maxIteration)
+}
+
+const isValidJson = (str) => {
+    try {
+        return JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
 }
 
 export default {
@@ -249,6 +258,7 @@ export default {
     MoreMenus,
     authorized,
     findElement,
+    isValidJson,
     greater_than,
     getTaskForce,
     resizedElement,

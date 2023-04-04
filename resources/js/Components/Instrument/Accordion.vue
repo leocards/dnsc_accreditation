@@ -78,7 +78,11 @@ const unselect = () => {
 }
 
 const include = () => {
-    Inertia.get(`/accreditation/instrument/exclude/${props.inst.id}?include=true`)
+    Inertia.visit(`/accreditation/instrument/exclude/${props.inst.id}?include=true`,{
+        method: 'get',
+        preserveState: true,
+        preserveScroll: true,
+    })
 }
 
 onUnmounted(()=>{

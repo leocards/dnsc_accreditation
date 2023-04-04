@@ -3,8 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Accreditation;
+use App\Models\AreaAssign;
+use App\Models\AreaSelfAccreditor;
+use App\Models\AttachedDocument;
+use App\Models\DocumentCurrentVersion;
 use App\Models\Instrument;
+use App\Models\InstrumentComment;
 use App\Models\Progress;
+use App\Models\TaskAssign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -158,6 +164,60 @@ class InstrumentController extends Controller
             return back()->with('success', 'Successful');
         } catch (\Throwable $th) {
             return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function destroy(Request $request) {
+        DB::beginTransaction();
+        try {
+
+            $inst = Instrument::find($request->id);
+
+            if($inst->category == 'lvl' || $inst->category == 'inst')
+                return back()->with('error', 'Cannot proccess request');
+
+            
+            DB::transaction(function () use ($request) {
+                $subs = Instrument::where('parent', $request->id)->get();
+                $collects = collect([...$subs]);
+
+                if($subs->count() > 0){
+                    while($subs->count() > 0){
+                        foreach ($subs as $value) {
+                            $subs = Instrument::where('parent', $value->id)->get();
+                            $collects->push(...$subs);
+                        }
+                    }
+                }
+
+                foreach($collects as $val) {
+                    Progress::where('instrumentId', $val['id'])->delete();
+                    TaskAssign::where('instrumentId', $val['id'])->orWhere('areaId', $val['id'])->delete();
+                    AreaAssign::where('areaId', $val['id'])->delete();
+                    AreaSelfAccreditor::where('instrumentId', $val['id'])->delete();
+                    AttachedDocument::where('instrumentId', $val['id'])->delete();
+                    InstrumentComment::where('instrumentId', $val['id'])->delete();
+                    Instrument::where('id', $val['id'])->delete();
+                    DocumentCurrentVersion::where('instrumentId', $val['id'])->update(['isRemoved', true]);
+                }
+            });
+            Progress::where('instrumentId', $inst['id'])->delete();
+            TaskAssign::where('instrumentId', $inst['id'])->orWhere('areaId', $inst['id'])->delete();
+            AreaAssign::where('areaId', $inst['id'])->delete();
+            AreaSelfAccreditor::where('instrumentId', $inst['id'])->delete();
+            AttachedDocument::where('instrumentId', $inst['id'])->delete();
+            InstrumentComment::where('instrumentId', $inst['id'])->delete();
+            DocumentCurrentVersion::where('instrumentId', $inst['id'])->update(['isRemoved', true]);
+            $inst->delete();
+
+            DB::commit();
+
+            return back()->with('success', 'Successfully deleted');
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to delete');
+
         }
     }
 
@@ -420,7 +480,7 @@ class InstrumentController extends Controller
                     Instrument::where('id', $id)->update([
                         'title' => $request->indicator, 
                         'description' => $request->indicator_label,
-                        'attachment' => $request->evidence_to_attach,
+                        'attachment' => json_encode($request->evidence_to_attach),
                     ]);
                 });
                 return back()->with('success', 'Updated successfully');
@@ -434,7 +494,7 @@ class InstrumentController extends Controller
                         'title' => $request->indicator, 
                         'parent' => $request->parent,
                         'description' => $request->indicator_label,
-                        'attachment' => $request->evidence_to_attach,
+                        'attachment' => json_encode($request->evidence_to_attach),
                         'category' => 'item',
                     ]);
 
@@ -450,7 +510,7 @@ class InstrumentController extends Controller
                 });
                 return back()->with('success', 'Created successfully');
             }catch(\Throwable $e){
-                return back()->with('error', 'Failed to create');
+                return back()->with('error', 'Failed to create'.$e->getMessage());
             }
         }
     }

@@ -17,8 +17,19 @@
                 <div>{{inst.description}}</div>
             </div>
             <div class="mt-3 max-w-[30rem]" v-if="inst.attachment">
-                <div class="dark:text-white/40">Evidence to attach</div>
-                <div>{{inst.attachment}}</div>
+                <div 
+                    v-if="myMethod.isValidJson(inst.attachment)" 
+                    v-for="(item, index) in myMethod.isValidJson(inst.attachment)" 
+                    :key="index"
+                    :class="{'mt-3':(index != 0)}"
+                >
+                    <div class="dark:text-white/40">Evidence to attach</div>
+                    <div>{{item.evidence}}</div>
+                </div>
+                <div v-else>
+                    <div class="dark:text-white/40">Evidence to attach</div>
+                    <div>{{inst.attachment}}</div>
+                </div>
             </div>
 
         </div>
@@ -27,6 +38,7 @@
 </template>
 <script setup>
 import Modal from '../Modal.vue'
+import myMethod from '../../Store/Methods'
 
 const props = defineProps({
     inst: Object

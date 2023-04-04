@@ -21,6 +21,7 @@
             <EditButton @click="openUpdate" title="Edit" :disabled="!storeInstrument.selected || category == 'ind'" />
             <InfoButton title="Details" :disabled="!storeInstrument.selected || category == 'ind'" @click="isInstInfo = true" />
             <BlockButton @click="isExcludeArea = true" :disabled="!storeInstrument.selected || category == 'lvl' || category == 'inst'" title="Exclude from computation" />
+            <DeleteButton title="Delete" :disabled="!storeInstrument.selected || ['lvl', 'inst'].includes(category)" @click="isRemove=true" />
         </div>
     </template>
     
@@ -104,6 +105,13 @@
         @handleClose="isInstInfo = false"
     />
 
+    <RemoveInstrument 
+        :inst="storeInstrument.updateSelect"
+        v-if="storeInstrument.updateSelect && isRemove"
+        @handleDelete="deleteInstrument"
+        @handleClose="isRemove = false"
+    />
+
 </Layout>
 
 <input 
@@ -123,6 +131,7 @@ import BlockButton from '../Components/Buttons/Block.vue'
 import CreateButton from '../Components/Buttons/Create.vue'
 import NavTabs from '../Components/Accreditation/NavTab.vue'
 import Accordion from '../Components/Instrument/Accordion.vue'
+import DeleteButton from '../Components/Buttons/DelButton.vue'
 import TagButton from '../Components/Buttons/TagProgramButton.vue'
 import AreaModal from '../Components/Instrument/Area/AreaModal.vue'
 import InfoInstrument from '../Components/Instrument/InfoModal.vue'
@@ -130,6 +139,7 @@ import ExcludeModal from '../Components/Instrument/ExcludeModal.vue'
 import LevelModal from '../Components/Instrument/Level/LevelModal.vue'
 import TagProgramModal from '../Components/Instrument/TagProgramModal.vue'
 import InstrumentCard from '../Components/Accreditation/Instrument/Card.vue'
+import RemoveInstrument from '../Components/Instrument/RemoveInstrument.vue'
 import ParameterModal from '../Components/Instrument/Parameter/ParameterModal.vue'
 import IndicatorModal from '../Components/Instrument/Indicators/IndicatorModal.vue'
 import InstrumentModal from '../Components/Instrument/Instruments/InstrumentsModal.vue'
@@ -144,9 +154,9 @@ const props = defineProps({ current: Object, instruments: Array, createAs: Numbe
 
 const parent = ref(null)
 const isEdit = ref(false)
-const selected = ref(null)
 const category = ref(null)
 const createAs = ref(false)
+const isRemove = ref(false)
 const isInstInfo = ref(false)
 const isTagProgram = ref(false)
 const isExcludeArea = ref(false)
@@ -229,6 +239,20 @@ const closeCreate = () => {
 
 const closeExclude = () => {
     isExcludeArea.value = false
+}
+
+const deleteInstrument = () => {
+    Inertia.post('/accreditation/instrument/delete/',{
+        id: storeInstrument.selected
+    }, {
+        onSuccess: page => {
+            if(page.props.flash.success)
+            {
+                isRemove.value = false
+                closeGetSelect()
+            }
+        }
+    })
 }
 
 const update = (updates) => {

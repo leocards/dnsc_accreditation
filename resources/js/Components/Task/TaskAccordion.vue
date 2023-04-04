@@ -12,16 +12,7 @@
             @contextmenu.self=""
             @click.self="getSelected(inst)"
         >
-            <div class="pointer-events-none flex grow">
-                <div>{{inst.title}}</div>
-                <div class="ml-2 max-w-[34rem] grow qwIOrAQty">
-                    {{inst.description}}
-                </div>
-                <div class="ml-2 grow qwIOrAQty aqwQdwEr" v-if="inst.attachment">
-                    <div class="font-semibold">Evidence to attach</div>
-                    {{inst.attachment}}
-                </div>
-            </div>
+            <Content :inst="inst" />
 
             <div class="w-fit h-fit shrink-0 flex gap-2 items-center ml-1">
                 <div class="flex gap-2 items-center" v-if="!storeDocument.attachDocument">
@@ -80,6 +71,7 @@
     </AccordionContainer>
 </template>
 <script setup>
+import Content from '../Instrument/Content.vue'
 import AttachButton from '../Buttons/Attach.vue'
 import MoreH from '../Buttons/MeatballsMenuH.vue'
 import AccordionContainer from '../Accordion.vue'
@@ -114,6 +106,7 @@ const emits = defineEmits([
 
 const openOptions = ref(false)
 const openDropDown = ref(false)
+const expand = ref(false)
 
 const closeOptions = () => {
     openOptions.value = false

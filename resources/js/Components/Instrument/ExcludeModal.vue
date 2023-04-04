@@ -31,9 +31,13 @@ const emits = defineEmits([
 
 const submit = () => {
     if(props.area.category != 'lvl' || props.area.category != 'inst')
-        Inertia.get(`/accreditation/instrument/exclude/${props.area.id}`, {
+        Inertia.visit(`/accreditation/instrument/exclude/${props.area.id}`, {
+            method: 'get',
+            preserveState: true,
+            preserveScroll: true,
             onSuccess: page => {
-                console.log(page.props.flash)
+                if(page.props.flash.success)
+                    emits('handleClose')
             }
         })
 }

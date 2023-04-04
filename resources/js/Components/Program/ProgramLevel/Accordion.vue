@@ -12,16 +12,7 @@
             @contextmenu.self=""
             @click.self="getSelected(inst)"
         >
-            <div class="pointer-events-none flex grow">
-                <div>{{inst.title}}</div>
-                <div class="ml-2 max-w-[34rem] grow qwIOrAQty">
-                    {{inst.description}}
-                </div>
-                <div class="ml-2 grow qwIOrAQty aqwQdwEr" v-if="inst.attachment">
-                    <div class="font-semibold">Evidence to attach</div>
-                    {{inst.attachment}}
-                </div>
-            </div>
+            <Content :inst="inst" />
 
             <div class="w-fit h-fit shrink-0 flex gap-2 items-center ml-1">
                 <div class="flex gap-2 items-center" v-if="!storeDocument.attachDocument">
@@ -70,11 +61,13 @@
 
 <script setup>
 import Options from './InstrumentOption.vue'
+import Content from '../../Instrument/Content.vue'
 import AttachButton from '../../Buttons/Attach.vue'
 import AccordionContainer from '../../Accordion.vue'
 import MoreH from '../../Buttons/MeatballsMenuH.vue'
 import DownButton from '../../Buttons/DownButton.vue'
 import CommentButton from '../../Buttons/Comment.vue'
+import myMethod from '../../../Store/Methods'
 import { ref } from '@vue/reactivity'
 import { useProglevelStore } from '../../../Store/storeProgramLvl'
 import { useDocumentStore } from '../../../Store/storeDocument'
@@ -90,6 +83,7 @@ const emits = defineEmits(['handleSelect', 'handleCreate', 'handleDocument', 'ha
 
 const openDropDown = ref(false)
 const openOptions = ref(false)
+const expand = ref(false)
 
 const getSelected = (inst) => {
     emits('handleSelect', inst)

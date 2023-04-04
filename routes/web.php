@@ -93,6 +93,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/accreditation/instrument/exclude/{inst}', 'excludeInComputation');
             
             Route::post('/accreditation/instrument/create/{id?}', 'store');
+            Route::post('/accreditation/instrument/delete', 'destroy');
         });
     });
 
