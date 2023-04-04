@@ -198,7 +198,7 @@ class InstrumentController extends Controller
                     AttachedDocument::where('instrumentId', $val['id'])->delete();
                     InstrumentComment::where('instrumentId', $val['id'])->delete();
                     Instrument::where('id', $val['id'])->delete();
-                    DocumentCurrentVersion::where('instrumentId', $val['id'])->update(['isRemoved', true]);
+                    DocumentCurrentVersion::where('instrumentId', $val['id'])->update(['isRemoved'=>true]);
                 }
             });
             Progress::where('instrumentId', $inst['id'])->delete();
@@ -207,7 +207,7 @@ class InstrumentController extends Controller
             AreaSelfAccreditor::where('instrumentId', $inst['id'])->delete();
             AttachedDocument::where('instrumentId', $inst['id'])->delete();
             InstrumentComment::where('instrumentId', $inst['id'])->delete();
-            DocumentCurrentVersion::where('instrumentId', $inst['id'])->update(['isRemoved', true]);
+            DocumentCurrentVersion::where('instrumentId', $inst['id'])->update(['isRemoved'=>true]);
             $inst->delete();
 
             DB::commit();
@@ -216,6 +216,7 @@ class InstrumentController extends Controller
 
         } catch (\Throwable $th) {
             DB::rollBack();
+            dd($th->getMessage());
             return back()->with('error', 'Failed to delete');
 
         }

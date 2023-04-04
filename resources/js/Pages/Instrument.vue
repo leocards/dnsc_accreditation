@@ -110,6 +110,7 @@
         v-if="storeInstrument.updateSelect && isRemove"
         @handleDelete="deleteInstrument"
         @handleClose="isRemove = false"
+        @handleCancel="cancelDelete"
     />
 
 </Layout>
@@ -158,6 +159,7 @@ const category = ref(null)
 const createAs = ref(false)
 const isRemove = ref(false)
 const isInstInfo = ref(false)
+const cancelToken = ref(null)
 const isTagProgram = ref(false)
 const isExcludeArea = ref(false)
 const createParamOrInd = ref(null)
@@ -245,6 +247,10 @@ const deleteInstrument = () => {
     Inertia.post('/accreditation/instrument/delete/',{
         id: storeInstrument.selected
     }, {
+        onCancelToken: cancelT => {
+            cancelToken.value = cancelT
+            console.log('canceled')
+        },
         onSuccess: page => {
             if(page.props.flash.success)
             {
@@ -253,6 +259,13 @@ const deleteInstrument = () => {
             }
         }
     })
+}
+
+const cancelDelete = () => {
+    if(cancelToken.value)
+        cancelToken.value.cancel()
+
+    isRemove.value = false
 }
 
 const update = (updates) => {
