@@ -18,13 +18,13 @@
             </div>
             <button 
                 v-if="expand && isExpandable"
-                class="absolute top-0 right-0 text-xs opacity-60 hover:opacity-100 
+                class="absolute top-0 right-0 text-xs opacity-60 hover:opacity-100 hover:text-white
                 hover:bg-dnscGreen/80 px-1.5 py-0.5 rounded-full pointer-events-auto actionBtn"
                 @click="expand = false"
             > minimize </button>
             <button 
                 v-if="!expand && isExpandable"
-                class="absolute top-0 right-0 text-xs opacity-60 hover:opacity-100 
+                class="absolute top-0 right-0 text-xs opacity-60 hover:opacity-100 hover:text-white
                 hover:bg-dnscGreen/80 px-1.5 py-0.5 rounded-full pointer-events-auto actionBtn"
                 @click="expand = true"
             > expand </button>
@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import myMethod from '../../Store/Methods'
 
 const props = defineProps({
@@ -51,7 +51,7 @@ const parentContainer = ref(null)
 const contentContainer = ref(null)
 const descriptionContent = ref(null)
 
-onMounted(()=>{
+function showToggleExpand() {
     if(descriptionContent.value)
     {
         let testLineDesc = contentContainer.value.offsetHeight/parseInt(getComputedStyle(contentContainer.value).lineHeight)
@@ -62,5 +62,19 @@ onMounted(()=>{
             isExpandable.value = true
         }
     }
+}
+
+onMounted(()=>{
+    myMethod.resizedElement(parentContainer.value, ()=>{
+        showToggleExpand()
+    })
+
+    watchEffect(()=>{
+        if(props.inst){
+            showToggleExpand()
+
+            console.log('asdfasdf')
+        }
+    })
 })
 </script>
