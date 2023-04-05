@@ -26,7 +26,10 @@ trait InstrumentsTrait {
 
             if($childrens->count() > 0 )
             {
-                $childrens->makeHidden(['created_at', 'updated_at', 'action', 'indicator']);                    
+                $childrens->makeHidden(['created_at', 'updated_at', 'action', 'indicator']);  
+                
+                if($childrens->first()->category != 'ind' && $childrens->first()->category != 'area')
+                    $childrens = $childrens->sortBy('title');
 
                 foreach ($childrens as $child) {
                     if($accred && !$rate){

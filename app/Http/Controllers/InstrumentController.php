@@ -244,7 +244,7 @@ class InstrumentController extends Controller
 
                 if($instrument->count() !== 0)
                 {
-                    if($instrument->first()->category != 'ind'){
+                    if($instrument->first()->category != 'ind' && $instrument->first()->category != 'area'){
                         $instrument = $instrument->sortBy('title');
                     }
                     foreach ($instrument as $key => $value) {
