@@ -20,20 +20,20 @@ class AccreditationController extends Controller
         return Inertia::render('Accreditation', [
             'accreditation' => $this->getAccreditations(),
             'actual_survey' => Accreditation::where('survey', 1)
-                                ->get(['id', 'instrumentId', 'programId', 'restrict', 'survey', 'status'])
+                                ->get(['id', 'instrumentId', 'programId', 'restrict', 'survey', 'status', 'verified'])
                                 ->map(function ($accred) {
                                     $program = $accred->taggedPrograms->only('abbreviation');
                                     $accred->program = $program['abbreviation'];
                                     $accred->title = $accred->getLevelInstrument->only('title')['title'];
-                                    return $accred->only('id', 'instrumentId', 'programId', 'restrict', 'survey', 'program', 'title', 'programId', 'selfSurvey', 'status');
+                                    return $accred->only('id', 'instrumentId', 'programId', 'restrict', 'survey', 'program', 'title', 'programId', 'selfSurvey', 'status', 'verified');
                                 }),
             'self_survey' => Accreditation::where('survey', 2)
-                                ->get(['id', 'instrumentId', 'programId', 'restrict', 'survey', 'status'])
+                                ->get(['id', 'instrumentId', 'programId', 'restrict', 'survey', 'status', 'verified'])
                                 ->map(function ($accred) {
                                     $program = $accred->taggedPrograms->only('abbreviation');
                                     $accred->program = $program['abbreviation'];
                                     $accred->title = $accred->getLevelInstrument->only('title')['title'];
-                                    return $accred->only('id', 'instrumentId', 'programId', 'restrict', 'survey', 'program', 'title', 'programId', 'selfSurvey', 'status');
+                                    return $accred->only('id', 'instrumentId', 'programId', 'restrict', 'survey', 'program', 'title', 'programId', 'selfSurvey', 'status', 'verified');
                                 }),
         ]);
     }
@@ -277,7 +277,7 @@ class AccreditationController extends Controller
         );
     }
 
-    public function setAccredStatus(REquest $request)
+    public function setAccredStatus(Request $request)
     {
         try {
 
@@ -291,6 +291,22 @@ class AccreditationController extends Controller
 
         } catch(\Throwable $th) {
             return back()->with('error', 'Failed to set status');
+        }
+    }
+
+    public function unverify(Request $request)
+    {
+        try {
+            DB::transaction(function () use ($request) {
+                $status = Accreditation::find($request->id);
+                $status->verified = null;
+                $status->save();
+            });
+            
+            return back()->with('success', 'Unverified successfully');
+
+        } catch (\Throwable $th) {
+            return back()->with('error', 'Failed to unverify');
         }
     }
 
@@ -332,7 +348,8 @@ class AccreditationController extends Controller
             'accreditations.programId',
             'accreditations.instrumentId',
             'accreditations.selfSurvey',
-            'accreditations.status'
+            'accreditations.status',
+            'accreditations.verified',
         ]);
         return $programs;
     }

@@ -84,6 +84,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/accreditation/confirmVerify', 'confirmVerified');
             Route::post('/accreditation/update_tag_program', 'updateTag');
             Route::post('/accreditation/set_status', 'setAccredStatus');
+            Route::Post('/accreditation/unverify_rates', 'unverify');
         });
         
         //instrument routes

@@ -79,7 +79,4 @@ watch(status, val => {
     else 
         isModified.value = false
 })
-
-console.log(props)
-
 </script>

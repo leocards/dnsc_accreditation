@@ -20,7 +20,15 @@
             </div>
             <div class="w-fit h-fit shrink-0 flex gap-2 items-center ml-1">
                 <DocumentButton v-if="inst.category == 'item'" title="Documents" @click="document(inst)" />
-                <RateButton v-if="$page.props.rate" @click="rateInstrument(inst)" title="" :rate="inst.rate.rate" />
+                <RateButton 
+                    v-if="$page.props.rate" 
+                    :disabled="inst.category != 'item'"
+                    :disable="inst.category != 'item'"
+                    :class="{'disabled:text-dnscGreen':openDropDown}"
+                    @click="rateInstrument(inst)" 
+                    title="Rate" 
+                    :rate="inst.rate.rate" 
+                />
                 <CommentButton title="Comment" :comments="inst.comment" @click="$emit('handleComment', inst)"/>
                 <DownButton 
                     title="Show more"
@@ -71,7 +79,8 @@ const emits = defineEmits([
 const openDropDown = ref(false)
 
 const rateInstrument = inst => {
-    emits('handleRate', inst)
+    if(inst.category == 'item')
+        emits('handleRate', inst)
 }
 
 const comment = inst => {

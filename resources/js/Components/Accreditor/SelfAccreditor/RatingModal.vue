@@ -11,7 +11,7 @@
                 <input ref="rateInput" type="text" :class="[rateForm.errors.rate?'formInput_error':'formInput']" v-model="rate" placeholder="rate">
 
                 <div class="flex justify-end mt-3 mb-3">
-                    <Submit :disabled="!rate || rateForm.errors.rate">
+                    <Submit :disabled="(!rate || rateForm.errors.rate) || rateForm.processing">
                         Submit
                     </Submit>
                 </div>
