@@ -9,8 +9,11 @@ use App\Models\AttachedDocument;
 use App\Models\DocumentCurrentVersion;
 use App\Models\Instrument;
 use App\Models\InstrumentComment;
+use App\Models\Notification;
 use App\Models\Progress;
+use App\Models\SelfSurveyRate;
 use App\Models\TaskAssign;
+use App\Models\UserLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -196,18 +199,25 @@ class InstrumentController extends Controller
                     AreaAssign::where('areaId', $val['id'])->delete();
                     AreaSelfAccreditor::where('instrumentId', $val['id'])->delete();
                     AttachedDocument::where('instrumentId', $val['id'])->delete();
+                    SelfSurveyRate::where('instrumentId', $val['id'])->delete();
+                    Notification::where('instrumentId', $val['id'])->delete();
+                    UserLog::where('instrumentId', $val['id'])->delete();
                     InstrumentComment::where('instrumentId', $val['id'])->delete();
                     Instrument::where('id', $val['id'])->delete();
-                    DocumentCurrentVersion::where('instrumentId', $val['id'])->update(['isRemoved'=>true]);
+                    DocumentCurrentVersion::where('instrumentId', $val['id'])->update(['isRemoved'=>true, 'instrumentId'=>null]);
                 }
             });
+            
             Progress::where('instrumentId', $inst['id'])->delete();
             TaskAssign::where('instrumentId', $inst['id'])->orWhere('areaId', $inst['id'])->delete();
             AreaAssign::where('areaId', $inst['id'])->delete();
             AreaSelfAccreditor::where('instrumentId', $inst['id'])->delete();
             AttachedDocument::where('instrumentId', $inst['id'])->delete();
+            SelfSurveyRate::where('instrumentId', $inst['id'])->delete();
+            Notification::where('instrumentId', $inst['id'])->delete();
+            UserLog::where('instrumentId', $inst['id'])->delete();
             InstrumentComment::where('instrumentId', $inst['id'])->delete();
-            DocumentCurrentVersion::where('instrumentId', $inst['id'])->update(['isRemoved'=>true]);
+            DocumentCurrentVersion::where('instrumentId', $inst['id'])->update(['isRemoved'=>true, 'instrumentId'=>null]);
             $inst->delete();
 
             DB::commit();
@@ -480,11 +490,18 @@ class InstrumentController extends Controller
         if($id)
         {
             try{
-                DB::transaction(function () use ($request, $id) {
+
+                $evidences = array_filter($request->evidence_to_attach, function ($val) {
+                    if(trim($val['evidence']) != '' && $val['evidence']) {
+                        return $val;
+                    }
+                });
+
+                DB::transaction(function () use ($request, $id, $evidences) {
                     Instrument::where('id', $id)->update([
                         'title' => $request->indicator, 
                         'description' => $request->indicator_label,
-                        'attachment' => json_encode($request->evidence_to_attach),
+                        'attachment' => json_encode(collect([...$evidences])),
                     ]);
                 });
                 return back()->with('success', 'Updated successfully');
@@ -493,12 +510,19 @@ class InstrumentController extends Controller
             }
         }else{
             try{
-                DB::transaction(function () use ($request) {
+
+                $evidences = array_filter($request->evidence_to_attach, function ($val) {
+                    if(trim($val['evidence']) != '' && $val['evidence']) {
+                        return $val;
+                    }
+                });
+
+                DB::transaction(function () use ($request, $evidences) {
                     $indicators = Instrument::create([
                         'title' => $request->indicator, 
                         'parent' => $request->parent,
                         'description' => $request->indicator_label,
-                        'attachment' => json_encode($request->evidence_to_attach),
+                        'attachment' => json_encode(collect([...$evidences])),
                         'category' => 'item',
                     ]);
 

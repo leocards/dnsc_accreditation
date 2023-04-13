@@ -14,23 +14,23 @@
             >
                 {{ inst.description }}
             </div>
-            <div
+            <ul
                 class="ml-2 qwIOrAQty aqwQdwEr grow relative max-w-[33rem]"
                 :class="{ Twoline: !expand }"
                 ref="evidenceContect"
-                v-if="inst.attachment && myMethod.isValidJson(inst.attachment)"
+                v-if="inst.attachment && (myMethod.isValidJsonAndEmpty(inst.attachment))"
             >
-                <div
+                <div class="font-semibold">Evidence to attach <span class="pl-2"> {{ myMethod.isValidJsonAndEmpty(inst.attachment).length }} </span></div>
+                <li
                     :class="{ 'mt-3': index != 0 }"
                     v-for="(item, index) in myMethod.isValidJson(
                         inst.attachment
                     )"
                     :key="index"
                 >
-                    <div class="font-semibold">Evidence to attach</div>
-                    {{ item.evidence }}
-                </div>
-            </div>
+                    &#x2022; {{ item.evidence }}
+                </li>
+            </ul>
             <button
                 v-if="expand && isExpandable"
                 class="absolute top-0 right-0 text-xs opacity-60 hover:opacity-100 hover:text-white hover:bg-dnscGreen/80 px-1.5 py-0.5 rounded-full pointer-events-auto actionBtn"
@@ -48,7 +48,7 @@
             <div
                 class="ml-2 grow qwIOrAQty aqwQdwEr max-w-[33rem]"
                 v-if="
-                    inst.attachment != null &&
+                    inst.attachment &&
                     !myMethod.isValidJson(inst.attachment)
                 "
                 :class="{ Twoline: !expand }"
@@ -90,7 +90,9 @@ function showToggleExpand() {
         }
         if (
             evidenceContect.value &&
-            evidenceContect.value.innerText.length > 90
+            (evidenceContect.value.innerText.length > 90 || 
+                (myMethod.isValidJson(props.inst.attachment) ? myMethod.isValidJson(props.inst.attachment).length > 1 : false
+            ))
         ) {
             isExpandable.value = true;
         } else if (

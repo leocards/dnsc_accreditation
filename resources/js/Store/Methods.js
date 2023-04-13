@@ -249,6 +249,20 @@ const isValidJson = (str) => {
     }
 }
 
+const isValidJsonAndEmpty = (str) => {
+    try {
+        let data = isValidJson(str)
+        if(data) {
+            let filtered = data.filter(obj => {
+                return obj.evidence !== null;
+            })
+            return filtered.length == 0? false : filtered;
+        }
+    } catch (e) {
+        return false;
+    }
+}
+
 export default {
     K_means,
     role,
@@ -264,5 +278,6 @@ export default {
     resizedElement,
     less_than_equal,
     greater_than_equal,
+    isValidJsonAndEmpty,
     documentContextMenus,
 }
