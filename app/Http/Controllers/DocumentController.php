@@ -236,7 +236,7 @@ class DocumentController extends Controller
             $tfc = AreaAssign::where('areaId', $areaTfc)->where('levelId', $request->accredlvl)->where('role', 'tfc')->first();
 
             $docuUpload = collect([
-                "userId" => $tfc->userId,
+                "userId" => $tfc?$tfc->userId:Auth::id(),
                 "docuCurrId" => $currentDocu->id,
                 "details" => 'Uploaded new document '. $request->title
                 
@@ -245,13 +245,12 @@ class DocumentController extends Controller
             //log user activity getArea
             $this->userLog($request->accredlvl, $document->id, $request->instrument, 'uploaded this document');
 
-            if($tfc->userId != Auth::id() && $document->userId != Auth::id())
+            if(($tfc?$tfc->userId:Auth::id()) != Auth::id() && $document->userId != Auth::id())
                 $this->DocumentUpload($docuUpload);
 
             DB::commit(); 
             return back()->with('success', 'Uploaded successfully');
         } catch (\Throwable $th) {
-
             DB::rollBack();
             return back()->with('error', 'Failed to upload');
         }
