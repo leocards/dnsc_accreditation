@@ -10,14 +10,9 @@
                 [storeAccreditor.selected == inst.id && !openDropDown ?'bg-dnscGreen/20 dark:bg-dnscGreen/40 dark:text-green-400 text-dnscGreen dark:border-green-900/80 border-dnscGreen/5':''],
                 [storeAccreditor.selected != inst.id && openDropDown?'bg-dnscGreen/30 dark:bg- dark:text-green-400 text-dnscGreen dark:border-green-500/80 border-dnscGreen/80':'']
             "
-            @contextmenu.self=""
+            @click.self="document(inst)"
         >
-            <div class="pointer-events-none flex grow">
-                <div>{{inst.title}} </div>
-                <div class="ml-2 grow qwIOrAQty">
-                    {{inst.description}}
-                </div>
-            </div>
+            <Content :inst="inst" @handleEvidence="document" :active="(storeAccreditor.selected == inst.id)" />
             <div class="w-fit h-fit shrink-0 flex gap-2 items-center ml-1">
                 <DocumentButton v-if="inst.category == 'item'" title="Documents" @click="document(inst)" />
                 <RateButton 
@@ -56,6 +51,7 @@
     </AccordionContainer>
 </template>
 <script setup>
+import Content from '../Instrument/Content.vue'
 import AccordionContainer from '../Accordion.vue'
 import DownButton from '../Buttons/DownButton.vue'
 import RateButton from '../Buttons/RateButton.vue'
@@ -63,8 +59,10 @@ import CommentButton from '../Buttons/Comment.vue'
 import DocumentButton from '../Buttons/Document.vue'
 import { useAccreditorStore } from '../../Store/storeAccreditor'
 import { ref } from '@vue/reactivity'
+import { useDocumentStore } from '../../Store/storeDocument'
 
 const storeAccreditor = useAccreditorStore()
+const storeDocument = useDocumentStore()
 
 const props = defineProps({
     inst: Object,
@@ -87,8 +85,9 @@ const comment = inst => {
     emits('handleComment', inst)
 }
 
-const document = inst => {
-    emits('handleDocument', inst)
+const document = (inst, evidence = null) => {
+    storeDocument.evidenceIndex = evidence
+    emits('handleDocument', inst, evidence)
 }
 
 </script>

@@ -3,7 +3,7 @@
         <title>Accreditation | Accreditor</title>
     </Head>
     
-    <div class="w-full h-14 bg-white fixed top-0 flex items-center z-30 subnavBg">
+    <div class="w-full h-14 bg-white fixed top-0 flex items-center z-30 subnavBg " @contextmenu.prevent>
         <div class="md:w-60 h-full flex items-center gap-2 px-3">
             <BurgerMenu @click="toggleSideBar" />
 
@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <div class="subnavBg lg:w-60 w-60 h-screen md:h-[calc(100%-3.5rem)] shrink-0 fixed md:top-14 z-50" v-if="!hideSidebar">
+    <div class="subnavBg lg:w-60 w-60 h-screen md:h-[calc(100%-3.5rem)] shrink-0 fixed md:top-14 z-50" v-if="!hideSidebar" @contextmenu.prevent>
 
         <div class="px-3 pb-1 w-full ml-auto flex items-center justify-end gap-2 border-b border-slate-200 dark:border-primaryDarkBorder"
         v-if="$page.props.currentProgram">
@@ -68,8 +68,8 @@
 
     <Profile :user="profile" v-if="isProfile" @handleClose="isProfile = false" />
     
-    <div class="min-h-[calc(100vh-3.5rem)] mt-14 max-sm:ml-0 max-sm:w-full md:w-full lg:ml-60 lg:w-[calc(100%-15rem)]"
-    :class="[!hideSidebar?'':'']">
+    <div class="min-h-[calc(100vh-3.5rem)] mt-14 max-sm:ml-0 max-sm:w-full md:w-full"
+    :class="[hideSidebar?'w-full':' lg:ml-60 lg:w-[calc(100%-15rem)]']" @contextmenu.prevent>
         <div class="px-2.5">
             <slot />
         </div>

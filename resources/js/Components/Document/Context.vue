@@ -20,19 +20,19 @@
                 <li class="my-2 border-t border-slate-200 dark:border-white/20" v-if="isMember"></li>
 
                 <li class="px-2 py-2 flex items-center gap-2.5 hover:bg-black/10 dark:hover:bg-white/20 transition_300 cursor-pointer"
-                v-if="isMember"
+                v-if="isMember || ([1,6,4].includes($page.props.user.auth) && $page.url.startsWith('/program'))"
                 :class="[isReview?'pointer-events-none text-black/30 dark:text-white/30':'']"
                 @click="$emit('handleReview', 'Approve')">
                     <ApproveIcon /> Approve
                 </li>
                 <li class="px-2 py-2 flex items-center gap-2.5 hover:bg-black/10 dark:hover:bg-white/20 transition_300 cursor-pointer"
-                v-if="isMember"
+                v-if="isMember || ([1,6,4].includes($page.props.user.auth) && $page.url.startsWith('/program'))"
                 :class="[isReview?'pointer-events-none text-black/30 dark:text-white/30':'']"
                 @click="$emit('handleReview', 'Revise')">
                     <ReviseIcon /> Revise
                 </li>
                 <li class="px-2 py-2 flex items-center gap-2.5 hover:bg-black/10 dark:hover:bg-white/20 transition_30 cursor-pointer"
-                v-if="isMember"
+                v-if="isMember || ([1,6,4].includes($page.props.user.auth) && $page.url.startsWith('/program'))"
                 :class="[isReview?'pointer-events-none text-black/30 dark:text-white/30':'']"
                 @click="$emit('handleReview', 'Reject')">
                     <RejectIcon /> Reject

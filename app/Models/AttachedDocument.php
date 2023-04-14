@@ -13,7 +13,8 @@ class AttachedDocument extends Model
         'documentId',
         'instrumentId',
         'accredlvl',
-        'isRemoved'
+        'isRemoved',
+        'evidence'
     ];
 
     public function getCurrentDocument()

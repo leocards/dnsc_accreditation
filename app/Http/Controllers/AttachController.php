@@ -22,11 +22,13 @@ class AttachController extends Controller
             $exist = AttachedDocument::where('accredlvl', $request->accred)
                 ->where('documentId', $request->document)
                 ->where('instrumentId', $request->instrument)
+                ->where('evidence', json_encode($request['evidence']))
                 ->first('id');
 
             $exist2 = DocumentCurrentVersion::where('accredlvl', $request->accred)
                 ->where('id', $request->document)
                 ->where('instrumentId', $request->instrument)
+                ->where('evidence', json_encode($request['evidence']))
                 ->first('id');
 
             if($exist || $exist2)
@@ -36,6 +38,7 @@ class AttachController extends Controller
                 'accredlvl' => $request->accred,
                 'documentId' => $request->document,
                 'instrumentId' => $request->instrument,
+                'evidence' => json_encode($request['evidence']),
             ]);
 
             $document = collect(DocumentCurrentVersion::find($request->document)->get_document);
@@ -54,35 +57,7 @@ class AttachController extends Controller
             );
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response()->json($th->getMessage(), 400);
+            return response()->json('Failed to attach document', 400);
         }
     }
 }
-/* 
-
-id:8
-userId:1
-file:"20230106020419.pdf"
-type:"pdf"
-title:"Final Exam SY 22-23"
-description:"adfasdfasdf"
-parent:null
-review:null
-isCurrent:1
-created_at:"2023-01-06T02:04:26.000000Z"
-updated_at:"2023-01-06T02:04:26.000000Z"
-docuCurrentId:6
-comment_count:0
-get_user:Object
-auth:1
-avatar:null
-designation:6
-first_name:"Leomas"
-id:1
-instituteId:null
-last_name:"Cardenio"
-programId:null
-status:null
-
-
-*/

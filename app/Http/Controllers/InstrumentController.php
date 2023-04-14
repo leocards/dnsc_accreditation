@@ -203,8 +203,8 @@ class InstrumentController extends Controller
                     Notification::where('instrumentId', $val['id'])->delete();
                     UserLog::where('instrumentId', $val['id'])->delete();
                     InstrumentComment::where('instrumentId', $val['id'])->delete();
-                    Instrument::where('id', $val['id'])->delete();
                     DocumentCurrentVersion::where('instrumentId', $val['id'])->update(['isRemoved'=>true, 'instrumentId'=>null]);
+                    Instrument::where('id', $val['id'])->delete();
                 }
             });
             

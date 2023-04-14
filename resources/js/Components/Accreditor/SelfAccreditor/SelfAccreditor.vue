@@ -30,6 +30,7 @@
         />
 
         <DocumentAside
+            :evidence="storeDocument.evidenceIndex"
             :user="$page.props.user.userId"
             :accredlvl="$page.props.accred.id"
             :top="'top-[4rem] h-[calc(100vh-4.5rem)]'"
@@ -64,8 +65,10 @@ import InstrumentComment from '../../Program/ProgramLevel/InstrumentComment.vue'
 import { Inertia } from '@inertiajs/inertia'
 import { useAccreditorStore } from '../../../Store/storeAccreditor'
 import { ref } from '@vue/reactivity'
+import { useDocumentStore } from '../../../Store/storeDocument'
 
 const storeAccreditor = useAccreditorStore()
+const storeDocument = useDocumentStore()
 
 const isRate = ref(false)
 const isComment = ref(false)

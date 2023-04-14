@@ -221,12 +221,14 @@ class DocumentController extends Controller
                 'parent' => null,
                 'isCurrent' => true
             ]);
-
+            
             $currentDocu = DocumentCurrentVersion::create([
                 'accredlvl' => $request->accredlvl,
                 'instrumentId' => $request->instrument,
                 'documentId' => $document->id,
+                'evidence' => json_encode($request->evidenceIndex['index']),
             ]);
+
 
             $request->documentType == 'link' ? '' : $this->processFile($file->folder, $file->file);
 
@@ -251,7 +253,7 @@ class DocumentController extends Controller
         } catch (\Throwable $th) {
 
             DB::rollBack();
-            return back()->with('error', $th->getMessage());
+            return back()->with('error', 'Failed to upload');
         }
     }
 
@@ -263,11 +265,14 @@ class DocumentController extends Controller
 
         try{
             DB::transaction(function () use ($request) {
-                $update = DocumentVersion::where('id', $request->id)
-                            ->update([
-                                'title'=>$request->title,
-                                'description'=>$request->description
-                            ]);
+                DocumentCurrentVersion::where('documentId', $request->id)
+                ->update(['evidence' => json_encode($request->evidenceIndex['index'])]);
+
+                DocumentVersion::where('id', $request->id)
+                    ->update([
+                        'title'=>$request->title,
+                        'description'=>$request->description
+                    ]);
 
                 //log user activity delete
                 $this->userLog($request->accredlvl, $request->id, $request->instrument, 'updated this document');

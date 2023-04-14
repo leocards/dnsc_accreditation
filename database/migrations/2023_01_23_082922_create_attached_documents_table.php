@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('documentId');
             $table->unsignedBigInteger('instrumentId');
+            $table->string('evidence')->nullable();
             $table->unsignedBigInteger('accredlvl');
             $table->boolean('isRemoved')->nullable();
             $table->foreign('documentId')->references('id')->on('document_current_versions');

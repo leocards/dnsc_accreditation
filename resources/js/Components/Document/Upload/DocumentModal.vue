@@ -66,6 +66,45 @@
                 </div>
             </div>
 
+            <div class="mt-3 w-[30rem]" v-if="(myMethod.isValidJsonAndEmpty(instrument.attachment) || instrument.attachment) && !isNewVersion">
+                <label for="title">Selected evidence to attach</label>
+                <div 
+                    class="w-full mt-2 h-10 pr-12 pl-3 select-none items-center flex border-slate-300 rounded border dark:bg-secondaryDarkBg dark:border-primaryDarkBorder cursor-pointer relative"
+                    v-click-outside="closeOption"
+                    @click.self="isShowOpetion = !isShowOpetion"
+                    v-if="myMethod.isValidJson(instrument.attachment)"
+                >
+                    <div class="Oneline pointer-events-none" v-if="documentForm.evidenceIndex.evidence"> {{ documentForm.evidenceIndex.evidence }} </div>
+                    <div class="text-slate-400 pointer-events-none" v-else>Select</div>
+
+                    <div 
+                        class="absolute top-10 left-0 bg-white w-full rounded shadow-md border border-slate-300 dark:bg-secondaryDarkBg dark:border-primaryDarkBorder select-none"
+                        v-if="isShowOpetion"
+                    >
+                        <div 
+                            class="py-1.5 hover:bg-gray-100 itemCard" 
+                            v-for="(item, index) in myMethod.isValidJson(instrument.attachment)" 
+                            :key="index"
+                            @click="selectOptionEvidence(item.evidence, index)"
+                        >
+                            <div 
+                                class="Oneline px-1.5 h-fit" 
+                            >{{ item.evidence }}</div>
+                        </div>
+                    </div>
+
+                    <div class="absolute top-2.5 right-2 pointer-events-none">
+                        <DownIcon />
+                    </div>
+                </div>
+
+                <div v-else
+                    class="w-full mt-2 h-10 pr-12 pl-3 select-none items-center flex border-slate-300 rounded border dark:bg-secondaryDarkBg dark:border-primaryDarkBorder"
+                >
+                    {{ instrument.attachment }}
+                </div>
+            </div>
+
             <div class="mt-3">
                 <label for="title">Title</label>
                 <span class="errorMessage ml-2" v-show="documentForm.errors.title">{{documentForm.errors.title}}</span>
@@ -97,10 +136,12 @@ import Modal from '../../Modal.vue'
 import vueFilePond from "vue-filepond"
 import Submit from '../../Buttons/Submit.vue'
 import Cancel from '../../Buttons/Cancel.vue'
+import DownIcon from '../../Icons/downIcon.vue'
 import FilePondPluginImagePreview from "filepond-plugin-image-preview"
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type"
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import axios from "axios"
+import myMethod from '../../../Store/Methods.js'
 import { useForm } from "@inertiajs/inertia-vue3"
 import { onMounted, ref } from "@vue/runtime-core"
 import { Inertia } from "@inertiajs/inertia"
@@ -120,6 +161,7 @@ const props = defineProps({
 })
 const emits = defineEmits(['handleClose'])//;console.log(props.instrument)
 
+const isShowOpetion = ref(false)
 const isUrl = ref(false)
 const documentForm = useForm({
     link: null,
@@ -131,8 +173,21 @@ const documentForm = useForm({
     docuCurrentId: null,
     accredlvl: props.accredlvl, 
     instrument: props.instrument.id,
+    evidenceIndex: {
+        index: [],
+        evidence: null
+    }
 })
 const isRestricted = ref(null)
+
+const closeOption = () => {
+    isShowOpetion.value = false
+}
+const selectOptionEvidence = (evidence, indx) => {
+    documentForm.evidenceIndex.index[0] = indx
+    documentForm.evidenceIndex.evidence = evidence
+    closeOption()
+}
 
 const create = () => {
     documentForm.documentType = isUrl.value ? 'link' : documentForm.documentType
@@ -155,7 +210,8 @@ const update = () => {
         title: documentForm.title,
         description: documentForm.description,
         accredlvl: documentForm.accredlvl,
-        instrument: documentForm.instrument
+        instrument: documentForm.instrument,
+        evidenceIndex: documentForm.evidenceIndex
     }, {
         onSuccess: () => {
             emits('handleClose', true)
@@ -186,8 +242,11 @@ const submit = () => {
 
 const handleFilepondLoad = (res) => {
     let result = JSON.parse(res)
+
+    if(!documentForm.title) {
+        documentForm.title = result.file_name
+    }
     documentForm.tempId = result.id
-    documentForm.title = result.file_name
     documentForm.documentType = result.file_type
 }
 
@@ -210,6 +269,31 @@ const errorFilePond = error => {
     }, 3000)
 }
 
+onMounted(() => {
+    try{
+        if(!props.isNewVersion) {
+            if(props.isEdit){
+                if(props.document.evidence){
+                    let evd = JSON.parse(props.document.evidence)[0]
+                    if(myMethod.isValidJsonAndEmpty(props.instrument.attachment)) {
+                        documentForm.evidenceIndex.index[0] = evd
+                        documentForm.evidenceIndex.evidence = myMethod.isValidJson(props.instrument.attachment)[evd].evidence
+                    }
+                }else{
+                    if(myMethod.isValidJsonAndEmpty(props.instrument.attachment)) {
+                        documentForm.evidenceIndex.index[0] = 0
+                        documentForm.evidenceIndex.evidence = myMethod.isValidJson(props.instrument.attachment)[0].evidence
+                    }
+                }
+            } else if(myMethod.isValidJsonAndEmpty(props.instrument.attachment)) {
+                documentForm.evidenceIndex.index[0] = 0
+                documentForm.evidenceIndex.evidence = myMethod.isValidJson(props.instrument.attachment)[0].evidence
+                console.log()
+            }
+        }
+    } catch (e) {
+    }
+})
 //if edit
 if(props.isEdit){
     documentForm.title = props.document.title
@@ -218,3 +302,12 @@ if(props.isEdit){
     documentForm.reset()
 }
 </script>
+
+<style scoped>
+select option {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+</style>

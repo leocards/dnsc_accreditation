@@ -2,7 +2,7 @@
     <Aside :top="top" @handleClose="$emit('handleClose')">
         <template #head>
             <div class="w-full grow flex justify-between items-center pr-2">
-                <div>Document</div> 
+                <div>Document </div> 
                 <button class="text-xs hover:bg-dnscGreen transition_300 rounded p-0.5 px-1 hover:text-white actionBtn"
                 @click="getDocuments">Refresh</button>
             </div>
@@ -21,7 +21,7 @@
             >
                 <div class="grow flex items-center px-1.5 pointer-events-none">
                     <div class="grow">
-                        <div class="Twoline">{{document.title}}</div>
+                        <div class="Twoline break-words whitespace-pre-wrap max-w-[calc(21rem-1.5rem)]">{{document.title}}</div>
                     </div>
 
                     <!-- <button type="button" class="w-7 h-7 rounded shrink-0 flex items-center justify-center ml-1.5 
@@ -57,7 +57,10 @@
             <Options
                 :selectedDocument="selectedDocument"
                 :isMember="role"
-                :isReview="(selectedDocument?selectedDocument.userId == $page.props.user.userId:false)"
+                :isReview="(selectedDocument?
+                    (selectedDocument.userId == $page.props.user.userId || (![1,6,4].includes($page.props.user.auth) && $page.url.startsWith('/program'))?
+                        false:true)
+                :false)"
                 v-if="auth_ != 5"
                 @handleReview="validateDocument"
                 @handleViewDocument="viewFromOptions"
@@ -78,7 +81,7 @@ import Options from '../../Document/Context.vue'
 import CommentIcon from '../../Icons/smallComment.vue'
 import myMethod from '../../../Store/Methods'
 import { useDocumentStore } from '../../../Store/storeDocument'
-import { onMounted, ref } from '@vue/runtime-core'
+import { onMounted, ref, watchEffect } from 'vue'
 
 const storeDocument = useDocumentStore()
 
@@ -88,7 +91,8 @@ const props = defineProps({
     accredlvl: Number,
     role: Boolean,
     top: String,
-    user: Number
+    user: Number,
+    evidence: Number
 })
 
 const emits = defineEmits([
@@ -159,7 +163,17 @@ const getDocuments = () => {
         }).then(res => {
             //console.table(res.data.documents)
             documents.value = true
-            storeDocument.documents = res.data.documents
+            let docus = res.data.documents
+            if(storeDocument.evidenceIndex != null) {
+                storeDocument.documents = docus.filter((docs, index) => {
+                    if(docs.evidence)
+                    {
+                        return myMethod.isValidJson(docs.evidence).includes(storeDocument.evidenceIndex)
+                    }
+                })
+            }else{
+                storeDocument.documents = docus
+            }
         })
 
     } catch (e) {
@@ -176,6 +190,12 @@ const windowsClick = e => {
         
     }
 }
+
+watchEffect(() => {
+    if(props.evidence != null){
+        getDocuments()
+    }
+})
 
 onMounted(()=>{
     window.addEventListener('click', windowsClick)

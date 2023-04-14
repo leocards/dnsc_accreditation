@@ -12,7 +12,7 @@
             @contextmenu.self=""
             @click.self="getSelected(inst)"
         >
-            <Content :inst="inst" />
+            <Content :inst="inst" @handleEvidence="getDocument" :active="(storeTaskPage.selected == inst.id)" />
 
             <div class="w-fit h-fit shrink-0 flex gap-2 items-center ml-1">
                 <div class="flex gap-2 items-center" v-if="!storeDocument.attachDocument">
@@ -38,7 +38,7 @@
                 </div>
                 <AttachButton 
                     v-if="storeDocument.attachDocument && (inst.category == 'item')" 
-                    @click="storeDocument.attachHere($page.props.home.id, inst.id, $page.props.flash)" 
+                    @click="storeDocument.evidenceToAttach($page.props.home.id, inst)"
                 />
                 <DownButton 
                     title="Show more"
@@ -112,6 +112,7 @@ const closeOptions = () => {
     openOptions.value = false
 }
 const getSelected = (inst) => {
+    storeDocument.evidenceIndex = null
     emits('handleSelect', inst)
 }
 const getComment = inst => {
@@ -120,8 +121,9 @@ const getComment = inst => {
 const resetSelected = inst => {
     emits('handleResetSelect', inst)
 }
-const getDocument = inst => {
-    emits('handleDocument', inst)
+const getDocument = (inst, evidence = null) => {
+    storeDocument.evidenceIndex = evidence
+    emits('handleDocument', inst, evidence)
     setTimeout(()=>{
         closeOptions()
     }, 1)

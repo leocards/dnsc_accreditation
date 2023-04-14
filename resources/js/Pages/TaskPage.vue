@@ -44,6 +44,7 @@
             @handleClose="closeInstrumentComment"
         />
         <DocumentAside 
+            :evidence="storeDocument.evidenceIndex"
             :user="$page.props.user.userId"
             :role="$page.props.areaRole"
             :accredlvl="$page.props.home.id"
@@ -110,6 +111,12 @@
         v-if="isShare && selectedDocu && storeTaskPage.selected"
         @handleClose="isShare = false"
     />
+
+    <AttatchToEvidenceModal
+        v-if="storeDocument.evidenceAttach.showModal"
+        @handle-close="storeDocument.evidenceAttach.showModal = false"
+    />
+
 </Layout>
 <input type="hidden" :value="setLocation($page.props.location??[])">
 </template>
@@ -122,6 +129,7 @@ import Upload from '../Components/Buttons/Upload.vue'
 import ShareModal from '../Components/Document/Share.vue'
 import TaskAccordion from '../Components/Task/TaskAccordion.vue'
 import InstrumentAside from '../Components/Instrument/InstrumentAside.vue'
+import AttatchToEvidenceModal from '../Components/Document/AttachToEvidence.vue'
 import RemoveCompleteModal from '../Components/Task/TaskPage/RemoveComplete.vue'
 import DocumentAside from '../Components/Program/ProgramLevel/DocumentAside.vue'
 import DocumentViewerModal from '../Components/Document/DocumentViewerModal.vue'

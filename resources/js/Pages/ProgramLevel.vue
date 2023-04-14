@@ -87,6 +87,7 @@
             @handleClose="closeInstrumentComment"
         />
         <DocumentAside 
+            :evidence="storeDocument.evidenceIndex"
             :user="$page.props.user.userId"
             :instrument="selected"
             :accredlvl="$page.props.currentlvl.accredId"
@@ -151,6 +152,11 @@
         @handleNewVersion="uploadNewVersion"
     />
 
+    <AttatchToEvidenceModal 
+        v-if="storeDocument.evidenceAttach.showModal"
+        @handle-close="storeDocument.evidenceAttach.showModal = false"
+    />
+
 </Layout>
 <input 
     type="hidden" 
@@ -160,7 +166,6 @@
 
 <script setup>
 import Layout from '../Components/Layout.vue'
-import Avatar from '../Components/Avatar.vue'
 import Crumbs from '../Components/BreadCrumbs.vue'
 import HomeButton from '../Components/Buttons/Home.vue'
 import BackButton from '../Components/Buttons/Back.vue'
@@ -171,6 +176,7 @@ import AccreditorButton from '../Components/Buttons/Accreditor.vue'
 import Accordion from '../Components/Program/ProgramLevel/Accordion.vue'
 import Card from '../Components/Program/ProgramLevel/InstrumentCard.vue'
 import InstrumentAside from '../Components/Instrument/InstrumentAside.vue'
+import AttatchToEvidenceModal from '../Components/Document/AttachToEvidence.vue'
 import DocumentAside from '../Components/Program/ProgramLevel/DocumentAside.vue'
 import DocumentViewerModal from '../Components/Document/DocumentViewerModal.vue'
 import ManageVersionModal from '../Components/Document/Upload/ManageVersion.vue'
@@ -183,8 +189,10 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { useProglevelStore } from '../Store/storeProgramLvl'
 import myMethod from '../Store/Methods'
+import { useDocumentStore } from '../Store/storeDocument'
 
 const storeProgLvl = useProglevelStore()
+const storeDocument = useDocumentStore()
 
 const isEdit = ref(false)
 const selected = ref(null)//Object

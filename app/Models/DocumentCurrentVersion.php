@@ -14,6 +14,7 @@ class DocumentCurrentVersion extends Model
         'instrumentId',
         'documentId',
         'isRemoved',
+        'evidence'
     ];
 
     public function get_document()
