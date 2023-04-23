@@ -9,17 +9,11 @@
                 <div>{{accred.title}}</div> <div>{{calculate_score(accredProgramAreas)}}</div>
             </div>
 
-            <div class="pl-2 mb-3 dark:text-white/40">Area rates</div>
+            <div class="pl-2 mb-2 dark:text-white/40">Area rates</div>
 
             <ul>
-                <li class="p-2 flex mb-2" v-for="area in accredProgramAreas">
-                    <div class="grow">
-                        {{area.area.title}} - {{area.area.description}}
-                    </div>   
-
-                    <div>
-                        {{area.rate}}  
-                    </div> 
+                <li class="p-1 mb-" v-for="area in accredProgramAreas">
+                    <RateSubs :insts="area" :accred="accred" @reCalculate="getRatingsArea()"/>
                 </li>
             </ul>
 
@@ -38,10 +32,13 @@
 <script setup>
 import Modal from '../Modal.vue'
 import Loading from '../Loading.vue'
+import RateSubs from './RateSubs.vue'
 import SubmitButton from '../Buttons/Submit.vue'
+import DownButton from '../Buttons/DownButton.vue'
 import { ref } from '@vue/reactivity';
 import axios from 'axios';
 import { Inertia } from '@inertiajs/inertia';
+import { onBeforeMount } from 'vue'
 
 const props = defineProps({
     accred: Object,
@@ -75,18 +72,26 @@ const confirmRates = () => {
     })
 }
 
-try {
+function getRatingsArea() {
+    try {
 
     axios.post('/accreditation/areas_certification',{
-        id: props.accred.id
+        id: props.accred.id,
+        parent: ''
     })
     .then(res => {
         accredProgramAreas.value = res.data
         disable.value = checkAreasRate(res.data) ? true : false
     })
 
-} catch (e) {
 
+    } catch (e) {
+
+    }
 }
+
+onBeforeMount(()=>{
+    getRatingsArea()
+})
 
 </script>

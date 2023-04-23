@@ -62,7 +62,7 @@ const getUserLogs = async () => {
 
         activities.value = data
     } catch (e) {
-        console.log(e)
+        //console.log(e)
     }
 }
 

@@ -265,7 +265,7 @@ const setResetLocation = id => {
 }
 
 const toggleMarkComplete = (instrument, setAsComplete) => {
-    //console.log(setAsComplete)
+    ////console.log(setAsComplete)
     if(!setAsComplete)
         Inertia.post('/task/set_as_complete', {
             id: instrument.progress.id,
@@ -279,7 +279,7 @@ const toggleMarkComplete = (instrument, setAsComplete) => {
         getSelect(instrument); 
         isUnmarkComplete.value = true;
     }
-        //console.log(setAsComplete)/*  */ //isUnmarkComplete.value = true
+        ////console.log(setAsComplete)/*  */ //isUnmarkComplete.value = true
 }
 const unmarkAsComplete = () => {
     Inertia.post('/task/set_as_complete', {
@@ -315,7 +315,7 @@ const getShare = docu => {
     isShare.value = true
     selectedDocu.value = docu
 
-    console.log(docu)
+    //console.log(docu)
 }
 
 const windowsClick = e => {
@@ -332,7 +332,7 @@ const windowsClick = e => {
     }
 }
 onMounted(()=>{
-    //console.log(props.)
+    ////console.log(props.)
 
     window.addEventListener('click', windowsClick)
     if(accordionContainer.value){
@@ -369,7 +369,7 @@ onMounted(()=>{
                     }
                 }
             }catch(e){
-                console.log()
+                //console.log()
             }
         })
     }

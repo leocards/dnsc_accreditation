@@ -33,7 +33,7 @@
                     v-if="expand"
                 >
                     <div class="">&#x2022; {{ item.evidence }} </div>
-                    <div class="ml-2 max-w-fit h-fit my-auto">
+                    <div class="ml-auto max-w-fit h-fit my-auto">
                         <button 
                             v-if="!$page.url.startsWith('/accreditation')"
                             class="text-sm pointer-events-auto px-1.5 py-0.5 rounded-full"
@@ -63,6 +63,21 @@
                     </button>
                 </li> -->
             </ul>
+            <div
+                class="ml-2 grow qwIOrAQty aqwQdwEr max-w-[33rem] flex flex-col"
+                v-if="
+                    inst.attachment &&
+                    !myMethod.isValidJson(inst.attachment)
+                "
+                ref="evidenceContect2" 
+                :class="{ 'justify-center': !expand }"
+            >
+                <div class="font-semibold">(1) Evidence to attach</div>
+                <div v-if="expand">
+                    {{ inst.attachment }}
+                </div>
+            </div>
+            
             <button
                 v-if="expand && isExpandable"
                 class="h-fit text-xs hover:opacity-100 hover:text-white hover:bg-dnscGreen/80 px-1.5 py-1 
@@ -79,19 +94,6 @@
             >
                 expand
             </button>
-
-            <div
-                class="ml-2 grow qwIOrAQty aqwQdwEr max-w-[33rem]"
-                v-if="
-                    inst.attachment &&
-                    !myMethod.isValidJson(inst.attachment)
-                "
-                :class="{ Twoline: !expand }"
-                ref="evidenceContect2"
-            >
-                <div class="font-semibold">Evidence to attach</div>
-                {{ inst.attachment }}
-            </div>
         </div>
     </div>
 </template>
@@ -124,8 +126,10 @@ function showToggleExpand() {
             contentContainer.value.offsetHeight /
             parseInt(getComputedStyle(contentContainer.value).lineHeight);
 
-        if((testLineDesc == 2 && descriptionContent.value.innerText.length > 90) || myMethod.isValidJsonAndEmpty(props.inst.attachment))
+        if((testLineDesc == 2 && descriptionContent.value.innerText.length > 97) || myMethod.isValidJsonAndEmpty(props.inst.attachment))
         {
+            isExpandable.value = true;
+        }else if(props.inst.attachment && !myMethod.isValidJson(props.inst.attachment)) {
             isExpandable.value = true;
         }
 

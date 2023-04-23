@@ -70,7 +70,7 @@ export const useDocumentStore = defineStore('Document', () => {
             processAttachment.value = false
             window.onbeforeunload = null
             attachDocument.value = null
-            console.log(e.response.data)
+            //console.log(e.response.data)
             flash.error = e.response.data == 'exist'? "Document already attached" : e.response.data == 'Restricted'?"Restricted":"Failed to attach"
         }
     }

@@ -57,7 +57,7 @@ const markAsRead = (id = false, index = null, seen = false) => {
                 }
             })
     } catch (e) {
-        console.log(e)
+        //console.log(e)
     }
 
 }

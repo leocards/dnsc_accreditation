@@ -133,7 +133,7 @@ const getMembers = (area, accredlvl) => {
         })
     })
     .catch(err => {
-        console.log(err)
+        ////console.log(err)
     })
 }
 
@@ -159,7 +159,7 @@ const cancel = () => {
 const create = () => {
     assignForm.post('/task/assignMember', {
         onSuccess: page => {
-            console.log(page.props.flash.error)
+            //console.log(page.props.flash.error)
             if(page.props.flash.success)
                 emits('handleClose')
         }
@@ -176,7 +176,7 @@ const addMemberAssign = () => {
 }
 
 const closeOnUpdate = (user, date) => {
-    console.log('asd')
+    //console.log('asd')
     assigned.value.find((assigned, index) => {
         if(assigned.id == user.id)
             updateList(index, date)

@@ -115,8 +115,8 @@ const share = user => {
                 modelValue.value = ''
                 searchResult.value = null
                 emits('handleClose')
-            }else
-                console.table(page.props.flash)
+            }else ''
+                //console.table(page.props.flash)
         }
     })
 }

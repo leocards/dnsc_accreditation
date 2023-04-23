@@ -26,10 +26,12 @@ trait InstrumentsTrait {
 
             if($childrens->count() > 0 )
             {
-                $childrens->makeHidden(['created_at', 'updated_at', 'action', 'indicator']);  
+                $childrens->makeHidden(['created_at', 'updated_at', 'action']);  
                 
-                if($childrens->first()->category != 'ind' && $childrens->first()->category != 'area')
-                    $childrens = $childrens->sortBy('title');
+                if($childrens->first()->category != 'area'){
+                    if($childrens->first()->category != 'ind'){ $childrens = $childrens->sortBy('title', SORT_NATURAL); $childrens->values()->all(); }
+                    else $childrens = $childrens->sortBy('indicator');
+                }
 
                 foreach ($childrens as $child) {
                     if($accred && !$rate){
@@ -168,12 +170,14 @@ trait InstrumentsTrait {
     {
         $instruments = collect([]);
 
-        $parent = Instrument::find($inst)->makeHidden(['created_at', 'updated_at']);
+        $parent = Instrument::find($inst);
+        $parent?$parent->makeHidden(['created_at', 'updated_at']):'';
 
         while ($parent->category != 'lvl') {
             $instruments->push($parent);
             $callBack?$callBack($parent):'';
-            $parent = Instrument::find($parent->parent)->makeHidden(['created_at', 'updated_at']);
+            $parent = Instrument::find($parent->parent);//category
+            $parent?$parent->makeHidden(['created_at', 'updated_at']):'';
         }
 
         if($res)

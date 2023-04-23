@@ -87,7 +87,7 @@ const getAreas = async (show = false, id) => {
         areas.value = res.data
 
     } catch (e) {
-        console.log(e)
+        //console.log(e)
     }
 }
 

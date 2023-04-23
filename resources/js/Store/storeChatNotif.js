@@ -35,7 +35,7 @@ export const useChatStore = defineStore('Chat', () => {
                 })
             })
         } catch (e) {
-            console.log(e)
+            //console.log(e)
         }
     }
 
@@ -57,7 +57,7 @@ export const useChatStore = defineStore('Chat', () => {
                 lastConversation.value = true
             }
         } catch (e) {
-            console.log(e)
+            //console.log(e)
         }
     }
 
@@ -88,7 +88,7 @@ export const useChatStore = defineStore('Chat', () => {
                 notifLoaded.value = false
             }
         } catch (e) {
-            console.log(e)
+            //console.log(e)
         }
     }
 

@@ -108,7 +108,7 @@ const registerUser = () => {
     register.post('/user/request/register', {
         preserveScroll: true,
         onSuccess: page => {
-            //console.log(page.props.flash)
+            ////console.log(page.props.flash)
             emits('update')
         }
     })
@@ -140,7 +140,7 @@ Promise.all([getAuthsAndDes(), getPrograms(), getInstitutes()])
     isLoading.value = false
 })
 .catch(err => {
-    console.log(err)
+    //console.log(err)
 })
 
 </script>

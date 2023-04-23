@@ -156,7 +156,58 @@ class AccreditorController extends Controller
 
             DB::rollBack();
             return back()->with('error', $th->getMessage());
+        }
+    }
 
+    public function reCalculate(Request $request)
+    {
+        try{
+            function getParentsCalc($inst, $res=false, $callBack=null)
+            {
+                $instruments = collect([]);
+
+                $parent = Instrument::find($inst);
+
+                $parent?$parent->makeHidden(['created_at', 'updated_at']):'';
+
+                if($parent)
+                    while ($parent->category != 'lvl') {
+                        $instruments->push($parent);
+                        $callBack?$callBack($parent):'';
+                        $parent = Instrument::find($parent->parent);//category
+                        $parent?$parent->makeHidden(['created_at', 'updated_at']):'';
+                    }
+
+                if($res)
+                    return $instruments;
+            }
+
+            getParentsCalc($request->id, false, function ($parent) use ($request) {
+                $childreRates = Progress::where('parent', $parent->id)
+                    ->where('accredlvlId', $request->accredlvlId)
+                    ->whereNull('exclude_rate')
+                    ->get(['id', 'rate'])
+                    ->map(function ($val) {
+                        $rate = is_numeric($val->rate)?$val->rate:0;
+    
+                        return collect([
+                            'id' => $val->id,
+                            'rate' => $rate
+                        ]);
+                    });
+    
+                $rate = round(($childreRates->sum('rate') / $childreRates->count()), 1);
+    
+                $pr = Progress::where('instrumentId', $parent->id)
+                    ->where('accredlvlId', $request->accredlvlId)
+                    ->first();
+                $pr->rate = $rate;
+                $pr->save();
+            });
+
+            return response()->json('success', 200);
+        } catch (\Throwable $th) {  
+            return response()->json('error', 400);
         }
     }
 

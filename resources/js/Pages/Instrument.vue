@@ -249,7 +249,7 @@ const deleteInstrument = () => {
     }, {
         onCancelToken: cancelT => {
             cancelToken.value = cancelT
-            console.log('canceled')
+            //console.log('canceled')
         },
         onSuccess: page => {
             if(page.props.flash.success)
@@ -329,7 +329,7 @@ onMounted(()=>{
                     }
                 }
             }catch(e){
-                console.log()
+                //console.log()
             }
         })
     }

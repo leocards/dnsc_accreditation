@@ -180,7 +180,7 @@ const update = () => {
                 emits('update', [])
                 emits('handleClose')
             }else{
-                console.log(page.props.flash)
+                //console.log(page.props.flash)
             }
         }
     })

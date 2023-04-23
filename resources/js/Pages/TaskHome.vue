@@ -118,7 +118,7 @@ onMounted(()=>{
                     }
                 }
             }catch(e){
-                console.log()
+                //console.log()
             }
         })
     }

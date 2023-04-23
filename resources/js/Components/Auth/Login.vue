@@ -75,7 +75,7 @@ const togglePass = () => {
 const submit = () => {
     Auth.post('/login', {
         onSuccess: page => {
-            console.log(page.props.flash.success)
+            //console.log(page.props.flash.success)
 
             page.props.flash.error == 'invalid' ?
                 Auth.errors.password = 'Invalid password':'';
@@ -85,7 +85,7 @@ const submit = () => {
             }
         },
         onError: error => {
-            console.log(error)
+            //console.log(error)
         }
     })
 }

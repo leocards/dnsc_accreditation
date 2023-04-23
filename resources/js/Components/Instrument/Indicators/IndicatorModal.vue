@@ -94,7 +94,7 @@ const create = () => {
                 storeInstrument.instruments = page.props.instruments
                 emits('update', page.props.instruments)
             }else{
-                console.log(page.props.flash.error)
+                //console.log(page.props.flash.error)
             }
         },
         onError: err => {

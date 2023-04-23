@@ -263,18 +263,53 @@ class AccreditationController extends Controller
 
     public function getAccredAreas(Request $request)
     {
-        return response()->json(
-            Progress::where('accredlvlId', $request->id)
-            ->whereNull('parent')
-            ->get(['instrumentId', 'rate'])
-            ->map(function ($inst) {
-                return collect([
-                    'id' => $inst->instrumentId,
-                    'area' => $inst->instrument->only('title', 'description'),
-                    'rate' => $inst->rate
-                ]);
-            })
-        );
+        try {
+            
+            if(!$request->parent) {
+                $areas = Progress::where('accredlvlId', $request->id)
+                ->whereNull('parent')
+                ->get(['instrumentId', 'rate', 'id'])
+                ->map(function ($inst) {
+                    $insts = collect([...$inst->instrument->only('title', 'description', 'category', 'indicator')]);
+                    return collect([
+                        'id' => $inst->instrumentId,
+                        'title' => $insts['title'],
+                        'description' => $insts['description'],
+                        'category' => $insts['category'],
+                        'indicator' => $insts['indicator'],
+                        'rate' => $inst->rate,
+                        'progress' => $inst->id
+                    ]);
+                });
+                
+                return response()->json(
+                    $areas
+                );
+            }
+
+            $insts = Instrument::find($request->parent);
+
+            if($insts->category != 'param')
+                $areas = Progress::where('progress.accredlvlId', $request->id)->where('instruments.parent', $request->parent)
+                ->join('instruments', 'progress.instrumentId', '=', 'instruments.id')
+                ->select('progress.instrumentId as id', 'progress.rate', 'progress.id as progress', 'instruments.title', 'instruments.description', 'instruments.category', 'instruments.indicator')
+                ->orderBy('instruments.title', 'asc')
+                ->get();
+            else {
+                $areas = Progress::where('progress.accredlvlId', $request->id)->where('instruments.parent', $request->parent)
+                ->join('instruments', 'progress.instrumentId', '=', 'instruments.id')
+                ->select('progress.instrumentId as id', 'progress.rate', 'progress.id as progress', 'instruments.title', 'instruments.description', 'instruments.category', 'instruments.indicator')
+                ->orderBy('instruments.indicator', 'asc')
+                ->get();
+            }
+
+            return response()->json(
+                $areas
+            );
+
+        } catch (\Throwable $th) {
+            return response()->json('error'.$th->getMessage(), 400);
+        }
     }
 
     public function setAccredStatus(Request $request)

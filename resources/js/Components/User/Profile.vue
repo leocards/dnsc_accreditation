@@ -201,7 +201,7 @@ const handleFilepondRevert = (uniqueId, load, error) => {
             loadUser(props.user)
             isModified.value = false
         }else{
-            console.log(res.data)
+            //console.log(res.data)
         }
     })
 }
@@ -220,8 +220,8 @@ const saveChanges = () => {
         onSuccess: page => {
             if(page.props.flash.success)
                 emits('handleClose', true)
-            else
-                console.log(page.props.flash.error)
+            else ''
+                //console.log(page.props.flash.error)
         }
     })
 }

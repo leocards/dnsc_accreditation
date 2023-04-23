@@ -226,9 +226,20 @@ class InstrumentController extends Controller
 
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th->getMessage());
             return back()->with('error', 'Failed to delete');
+        }
+    }
 
+    public function getAvailableIndicatorOfParameter(Request $request)
+    {
+        try {
+
+            return response()->json(
+                Instrument::where('parent', $request->id)->pluck('indicator')
+            );
+
+        } catch (\Throwable $th) {
+            return response()->json('Error');
         }
     }
 
@@ -254,8 +265,9 @@ class InstrumentController extends Controller
 
                 if($instrument->count() !== 0)
                 {
-                    if($instrument->first()->category != 'ind' && $instrument->first()->category != 'area'){
-                        $instrument = $instrument->sortBy('title');
+                    if($instrument->first()->category != 'lvl'){
+                        if($instrument->first()->category != 'ind'){ $instrument = $instrument->sortBy('title', SORT_NATURAL); $instrument->values()->all();}
+                        else{ $instrument = $instrument->sortBy('indicator'); }
                     }
                     foreach ($instrument as $key => $value) {
                         $instruments->push($value);
@@ -422,15 +434,65 @@ class InstrumentController extends Controller
     {
         if($id)
         {
+            $indicators = collect([]);
             try{
-                DB::transaction(function () use ($request, $id) {
+                DB::transaction(function () use ($request, $indicators, $id) {
+
+                    
+                    $inds = collect([...$request->indicators])->map(function($value) {
+                        return $value['id'];
+                    });
+                    
+                    $indRes = Instrument::where('parent', $id)->whereIn('indicator', $inds)
+                    ->pluck('indicator')->toArray();
+
+                    $inds = collect([...$request->indicators])->filter(function($value) use ($indRes) {
+                        if(!in_array($value['id'], $indRes) && $value['check']){
+                            return $value;
+                        }
+                    });
+
+                    $parameterArea = Instrument::find($id);
+
                     Instrument::where('id', $id)->update([
                         'title' => $request->parameter, 
                         'description' => $request->parameter_label,
                     ]);
+
+                    foreach ($inds as $key => $indicator) {
+                        if($indicator['check'] && !$indicator['isHidden']){
+                            $inst = Instrument::create([
+                                'title' => $indicator['title'], 
+                                'parent' => $id,
+                                'indicator' => $indicator['id'],
+                                'category'=>'ind',
+                            ]);
+                            /* 
+                                push the stored indicators to indicators collection
+                            */
+                            $indicators->push($inst);
+                        }
+                    }
+
+                    $levelAccred = Accreditation::where('instrumentId', $request->level)->get(['id']);
+
+                    if($levelAccred->count() > 0)
+                    {
+                        foreach($levelAccred as $lvl)
+                        {
+                            /* 
+                                store the created indicators to progress
+                            */
+                            foreach($indicators as $ind)
+                            {
+                                $this->createProgress($ind->id, $ind->parent, $parameterArea->parent, $lvl->id);
+                            }
+                        }
+                    }
                 });
                 return back()->with('success', 'Updated successfully');
             }catch(\Throwable $e){
+                dd($e->getMessage());
                 return back()->with('error', 'Failed to update');
             }
         }else{
@@ -449,16 +511,19 @@ class InstrumentController extends Controller
                     ]);
 
                     foreach ($request->indicators as $key => $indicator) {
-                        $inst = Instrument::create([
-                            'title' => $indicator['title'], 
-                            'parent' => $parameter->id,
-                            'indicator' => $indicator['id'],
-                            'category'=>'ind',
-                        ]);
-                        /* 
-                            push the stored indicators to indicators collection
-                        */
-                        $indicators->push($inst);
+
+                        if($indicator['check'] && !$indicator['isHidden']){
+                            $inst = Instrument::create([
+                                'title' => $indicator['title'], 
+                                'parent' => $parameter->id,
+                                'indicator' => $indicator['id'],
+                                'category'=>'ind',
+                            ]);
+                            /* 
+                                push the stored indicators to indicators collection
+                            */
+                            $indicators->push($inst);
+                        }
                     }
 
                     $levelAccred = Accreditation::where('instrumentId', $request->level)->get(['id']);

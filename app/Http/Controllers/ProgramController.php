@@ -317,6 +317,9 @@ class ProgramController extends Controller
     {
 
         $isArea = Instrument::find($inst);
+        
+        if(!$isArea)
+            abort(404);
 
         if($isArea->category == 'area')
         {
@@ -325,13 +328,18 @@ class ProgramController extends Controller
                 return $value;
             });
         }
-        return Instrument::where('parent', $inst)->whereNull('action')
+        
+        $instrument = Instrument::where('parent', $inst)->whereNull('action')
+                ->orderBy('title', 'asc')
                 ->get([
                     'id',
                     'title',
                     'category',
                     'description'
                 ]);
+                
+
+        return $instrument;
     }
     
     function getCrumbs($parent)

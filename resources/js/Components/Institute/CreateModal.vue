@@ -82,7 +82,7 @@ const create = () => {
             emits('handleClose')
         },
         onError: err => {
-            console.table(err)
+            //console.table(err)
         }
     })
 }
@@ -94,7 +94,7 @@ const update = () => {
         }
     })
 }
-console.log(props.institutes)
+//console.log(props.institutes)
 const submitForm = () => {
     if(!props.isEdit){ create() }
     else{ update() }

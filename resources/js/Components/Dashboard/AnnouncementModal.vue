@@ -55,7 +55,6 @@ const submit = (flash) => {
         emits('handleSave', res.data)
     })
     .catch(e => {
-        console.log(e)
         announceForm.errors.title = e.response.data.errors.title[0]
         announceForm.errors.message = e.response.data.errors.message[0]
     })

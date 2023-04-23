@@ -15,7 +15,7 @@ export const useUserStore = defineStore('User', ()=>{
                 authorization.value.push(...res.data.des_auth.auth)
                 designation.value.push(...res.data.des_auth.designation)
             }).catch(err => {
-                console.log(err)
+                //console.log(err)
             })
         }
     }

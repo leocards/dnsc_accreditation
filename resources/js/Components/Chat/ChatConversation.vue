@@ -121,7 +121,7 @@ const message = mess => {
                 sentStatus.value.sent = true
             }).catch(e => {
                 sentStatus.value.error = false
-                console.log(e)
+                //console.log(e)
                 setTimeout(() => {
                     sentStatus.value.error = true
                     sentStatus.value.sent = true

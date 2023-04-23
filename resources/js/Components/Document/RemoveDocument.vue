@@ -25,6 +25,7 @@ const deleteDocu = () => {
         id: storeDocument.setDocuToRemove.docuCurrentId,
         isAttached: 'isAttached' in storeDocument.setDocuToRemove ? storeDocument.setDocuToRemove.isAttached : null
     }, {
+        preserveScroll: true,
         onSuccess: page => {
             if(page.props.flash.success){
                 storeDocument.documents = storeDocument.documents.filter(({id}) => id != storeDocument.setDocuToRemove.id)

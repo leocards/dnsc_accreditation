@@ -271,7 +271,7 @@ const send = val => {
             }).then(res => {
                 comments.value.push(res.data.response)
             }).catch(error => {
-                console.log(error.response.data)
+                //console.log(error.response.data)
             })
         }
     }

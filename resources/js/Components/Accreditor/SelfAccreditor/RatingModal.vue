@@ -40,6 +40,7 @@ const rateInput = ref(null)
 const submitRate = () => {
     rateForm.rate = rate.value
     rateForm.post('/self_accreditor/rate', {
+        preserveScroll: true,
         onSuccess: page => {
             if(page.props.flash.success)
             {

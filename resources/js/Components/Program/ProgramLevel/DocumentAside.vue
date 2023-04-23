@@ -57,10 +57,9 @@
             <Options
                 :selectedDocument="selectedDocument"
                 :isMember="role"
-                :isReview="(selectedDocument?
-                    (selectedDocument.userId == $page.props.user.userId || (![1,6,4].includes($page.props.user.auth) && $page.url.startsWith('/program'))?
-                        false:true)
-                :false)"
+                :isReview="(selectedDocument ?
+                    ( isAuthorizeToVerify(selectedDocument.userId == $page.props.user.userId, $page.props.user.auth, $page.url.startsWith('/program')) )
+                : false )"
                 v-if="auth_ != 5"
                 @handleReview="validateDocument"
                 @handleViewDocument="viewFromOptions"
@@ -179,6 +178,11 @@ const getDocuments = () => {
     } catch (e) {
         console.log(e)
     }
+}
+
+const isAuthorizeToVerify = (uploader, auth, url) => {
+    if(uploader && ([1,6,4].includes(auth) && url))
+        return false
 }
 
 const windowsClick = e => {

@@ -95,6 +95,7 @@ Route::middleware(['auth'])->group(function () {
             
             Route::post('/accreditation/instrument/create/{id?}', 'store');
             Route::post('/accreditation/instrument/delete', 'destroy');
+            Route::post('/accreditation/instrument/parameter-indicators', 'getAvailableIndicatorOfParameter');
         });
     });
 
@@ -104,6 +105,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/accreditor/verify', 'verifyAccreditor')->name('accreditor_verify');
 
         Route::post('/self_accreditor/rate', 'rateInstrument');
+        Route::post('/self_accreditor/recalculateRate', 'reCalculate');
     });
 
     Route::controller(AttachController::class)->group(function () {

@@ -82,7 +82,7 @@ const enableDark = () => {
             let res = await axios.post('/user/setTheme', { theme: true})
             window.location.reload()
         } catch (e) {
-            console.log(e.message)
+            //console.log(e.message)
         }
     }
     setTheme()
@@ -93,7 +93,7 @@ const enableLight = () => {
             let res = await axios.post('/user/setTheme', { theme: null})
             window.location.reload()
         } catch (e) {
-            console.log(e.message)
+            //console.log(e.message)
         }
     }
     setTheme()

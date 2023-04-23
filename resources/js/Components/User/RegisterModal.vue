@@ -1,7 +1,7 @@
 <template>
     <Modal @handleClose="$emit('handleClose')">
         <template #header>
-            Register
+            {{(isEdit?'Update':'Register')}}
         </template>
 
         <form class="max-w-[30rem]" @submit.prevent="submit" v-if="!isLoading">
@@ -108,7 +108,7 @@ const registerUser = () => {
     register.post('/user/request/register', {
         preserveScroll: true,
         onSuccess: page => {
-            //console.log(page.props.flash)
+            ////console.log(page.props.flash)
             emits('update')
         }
     })
@@ -118,7 +118,7 @@ const updateUser = () => {
     register.post('/user/update', {
         preserveScroll: true,
         onSuccess: page => {
-            //console.log(page.props.flash)
+            ////console.log(page.props.flash)
             emits('update')
         }
     })
@@ -166,7 +166,7 @@ Promise.all([getAuthsAndDes(), getPrograms(), getInstitutes(), getUser()])
 
 })
 .catch(err => {
-    console.log(err)
+    //console.log(err)
 })
 
 

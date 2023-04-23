@@ -34,14 +34,14 @@ const instance = axios.create({
 
 instance.interceptors.response.use(
     response => {
-        console.log(response)
+        //console.log(response)
     },
     error => {
         if (error.response.status === 401) {
             // Redirect to login page or show an error message
             location.reload();
         }
-        console.log('adfasdf')
+        //console.log('adfasdf')
         return Promise.reject(error);
     }
 );

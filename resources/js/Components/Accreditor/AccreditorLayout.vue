@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <div class="subnavBg lg:w-60 w-60 h-screen md:h-[calc(100%-3.5rem)] shrink-0 fixed md:top-14 z-50" v-if="!hideSidebar" @contextmenu.prevent>
+    <div class="subnavBg lg:w-60 w-60 h-screen md:h-[calc(100%-3.5rem)] shrink-0 fixed md:top-14 z-50 flex flex-col" v-if="!hideSidebar" @contextmenu.prevent>
 
         <div class="px-3 pb-1 w-full ml-auto flex items-center justify-end gap-2 border-b border-slate-200 dark:border-primaryDarkBorder"
         v-if="$page.props.currentProgram">
@@ -126,7 +126,7 @@ const enableDark = () => {
             let res = await axios.post('/user/setTheme', { theme: true})
             window.location.reload()
         } catch (e) {
-            console.log(e.message)
+            //console.log(e.message)
         }
     }
     setTheme()
@@ -137,7 +137,7 @@ const enableLight = () => {
             let res = await axios.post('/user/setTheme', { theme: null})
             window.location.reload()
         } catch (e) {
-            console.log(e.message)
+            //console.log(e.message)
         }
     }
     setTheme()

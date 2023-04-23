@@ -154,7 +154,7 @@ const closeCurrentSurvey = (accred, isActual = false) => {
         accred: accred
     }, {
         onSuccess: page => {
-            //console.log(page.props.flash.error)
+            ////console.log(page.props.flash.error)
         }
     })
 }
@@ -232,7 +232,7 @@ try {
         });
 
 } catch (e) {
-    console.log(e)
+    //console.log(e)
 }
 
 </script>
