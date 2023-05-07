@@ -1,7 +1,7 @@
 <template>
     <Modal @handleClose="$emit('handleClose')">
         <div class="mt-3 w-[30rem]" v-if="(myMethod.isValidJsonAndEmpty(storeDocument.evidenceAttach.inst.attachment) || storeDocument.evidenceAttach.inst.attachment)">
-                <label for="title">Selected evidence to attach</label>
+                <label for="title">Select evidence to attach</label>
             
                 <div class="rounded md p-1 5 overflow-y-auto border border-slate-300 min-h-fit max-h-[20rem] mt-2">
                     <div class="flex items-center px-2 h-10 rounded hover:bg-gray-200 cursor-pointer transition_300 gap-1.5"

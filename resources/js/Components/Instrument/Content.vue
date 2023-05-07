@@ -35,7 +35,7 @@
                     <div class="">&#x2022; {{ item.evidence }} </div>
                     <div class="ml-auto max-w-fit h-fit my-auto">
                         <button 
-                            v-if="!$page.url.startsWith('/accreditation')"
+                            v-if="!$page.url.startsWith('/accreditation') && showDocuButton"
                             class="text-sm pointer-events-auto px-1.5 py-0.5 rounded-full"
                             :class="[active && index == storeDocument.evidenceIndex?'bg-dnscGreen text-white':'hover:bg-dnscGreen bg-green-600/20 hover:text-white text-green-700']"
                             @click="getEvidenceDocument(inst, index)"
@@ -107,7 +107,11 @@ const storeDocument = useDocumentStore()
 
 const props = defineProps({
     inst: Object,
-    active: Boolean
+    active: Boolean,
+    showDocuButton: {
+        type: Boolean,
+        default: true
+    }
 });
 
 const emit = defineEmits(['handleEvidence'])

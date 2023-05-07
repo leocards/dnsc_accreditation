@@ -11,16 +11,7 @@
             "
             @contextmenu.self=""
         >
-            <div class="pointer-events-none flex grow">
-                <div>{{inst.title}}</div>
-                <div class="ml-2 grow qwIOrAQty">
-                    {{inst.description}}
-                </div>
-                <div class="ml-2 grow qwIOrAQty aqwQdwEr" v-if="inst.attachment">
-                    <div class="font-semibold">Evidence to attach</div>
-                    {{inst.attachment}}
-                </div>
-            </div>
+            <Contents :inst="inst" :showDocuButton="false" />
 
             <div class="w-fit h-fit shrink-0 flex gap-3 items-center ml-1">
                 <div class="shrink-0 w-24" v-if="inst.due">
@@ -43,6 +34,7 @@ import Time from '../../DateTime.vue'
 import ForwardIcon from '../../Icons/backIcon.vue'
 import AccordionContainer from '../../Accordion.vue'
 import DownButton from '../../Buttons/DownButton.vue'
+import Contents from '../../Instrument/Content.vue'
 import { ref } from '@vue/reactivity'
 import { Inertia } from '@inertiajs/inertia'
 import { useTaskPageStore } from '../../../Store/storeTaskPage'

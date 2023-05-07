@@ -20,20 +20,20 @@ class AccreditationController extends Controller
         return Inertia::render('Accreditation', [
             'accreditation' => $this->getAccreditations(),
             'actual_survey' => Accreditation::where('survey', 1)
-                                ->get(['id', 'instrumentId', 'programId', 'restrict', 'survey', 'status', 'verified'])
+                                ->get(['id', 'instrumentId', 'programId', 'restrict', 'survey', 'status', 'verified', 'date_self_survey', 'date_actual_survey'])
                                 ->map(function ($accred) {
                                     $program = $accred->taggedPrograms->only('abbreviation');
                                     $accred->program = $program['abbreviation'];
                                     $accred->title = $accred->getLevelInstrument->only('title')['title'];
-                                    return $accred->only('id', 'instrumentId', 'programId', 'restrict', 'survey', 'program', 'title', 'programId', 'selfSurvey', 'status', 'verified');
+                                    return $accred->only('id', 'instrumentId', 'programId', 'restrict', 'survey', 'program', 'title', 'programId', 'date_self_survey', 'date_actual_survey', 'selfSurvey', 'status', 'verified');
                                 }),
             'self_survey' => Accreditation::where('survey', 2)
-                                ->get(['id', 'instrumentId', 'programId', 'restrict', 'survey', 'status', 'verified'])
+                                ->get(['id', 'instrumentId', 'programId', 'restrict', 'survey', 'status', 'verified', 'date_self_survey', 'date_actual_survey'])
                                 ->map(function ($accred) {
                                     $program = $accred->taggedPrograms->only('abbreviation');
                                     $accred->program = $program['abbreviation'];
                                     $accred->title = $accred->getLevelInstrument->only('title')['title'];
-                                    return $accred->only('id', 'instrumentId', 'programId', 'restrict', 'survey', 'program', 'title', 'programId', 'selfSurvey', 'status', 'verified');
+                                    return $accred->only('id', 'instrumentId', 'programId', 'restrict', 'survey', 'program', 'title', 'programId', 'date_self_survey', 'date_actual_survey', 'selfSurvey', 'status', 'verified');
                                 }),
         ]);
     }

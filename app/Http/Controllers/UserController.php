@@ -196,7 +196,6 @@ class UserController extends Controller
                 $user->last_name = $request->last_name;
                 $user->first_name = $request->first_name;
                 $user->username = $request->username;
-                $user->instituteId = $request->institute;
                 $user->avatar = $upload?$upload->file:Auth::user()->avatar;
                 $user->save();
 

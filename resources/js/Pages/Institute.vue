@@ -2,7 +2,7 @@
 <Layout :user="$page.props.user">
     <template #subNav>
         <div class="w-full py-1.5 flex gap-3 sticky top-14 subnavBg dark:border-primaryDarkBorder border-t border-slate-200 px-2.5">
-            <CreateButton @click="openCreate = true" />
+            <CreateButton @click="openCreate = true" v-if="[1,6].includes($page.props.user.auth)" />
             <EditButton :disabled="!selected" @click="edit" />
             <InfoButton :disabled="!selected" @click="isView = true" v-if="false" />
         </div>
