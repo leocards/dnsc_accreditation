@@ -22,7 +22,8 @@
             >
                 <div class="font-semibold">
                     <span class="">({{ myMethod.isValidJsonAndEmpty(inst.attachment).length }})</span> 
-                    Evidence<span v-if="myMethod.isValidJsonAndEmpty(inst.attachment).length > 1">s</span> to attach 
+                    <span v-if="!accreditor"> Evidence<span v-if="myMethod.isValidJsonAndEmpty(inst.attachment).length > 1">s</span> to attach</span>
+                    <span v-else> Evidence<span v-if="myMethod.isValidJsonAndEmpty(inst.attachment).length > 1">s</span> attached</span>
                 </div>
 
                 <li
@@ -111,6 +112,10 @@ const props = defineProps({
     showDocuButton: {
         type: Boolean,
         default: true
+    },
+    accreditor: {
+        type: Boolean,
+        default: false
     }
 });
 

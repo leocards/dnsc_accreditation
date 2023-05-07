@@ -10,11 +10,11 @@
                 [storeAccreditor.selected == inst.id && !openDropDown ?'bg-dnscGreen/20 dark:bg-dnscGreen/40 dark:text-green-400 text-dnscGreen dark:border-green-900/80 border-dnscGreen/5':''],
                 [storeAccreditor.selected != inst.id && openDropDown?'bg-dnscGreen/30 dark:bg- dark:text-green-400 text-dnscGreen dark:border-green-500/80 border-dnscGreen/80':'']
             "
-            @click.self="document(inst)"
+            @click.self=""
         >
-            <Content :inst="inst" @handleEvidence="document" :active="(storeAccreditor.selected == inst.id)" />
+            <Content :inst="inst" @handleEvidence="document" :active="(storeAccreditor.selected == inst.id)" :accreditor="true" />
             <div class="w-fit h-fit shrink-0 flex gap-2 items-center ml-1">
-                <DocumentButton v-if="inst.category == 'item'" title="Documents" @click="document(inst)" />
+                <!-- <DocumentButton v-if="inst.category == 'item'" title="Documents" @click="document(inst)" /> -->
                 <RateButton 
                     v-if="$page.props.rate" 
                     :disabled="inst.category != 'item'"
