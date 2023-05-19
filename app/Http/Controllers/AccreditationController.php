@@ -229,18 +229,44 @@ class AccreditationController extends Controller
         }
     }
 
-    public function unverified_accred()
+    public function unverified_accred(Request $req)
     {
-        return Accreditation::whereNull('verified')
-            ->get()
-            ->map(function ($val) {
-                $accred = '';
+        if(!$req->verified)
+            return Accreditation::whereNull('verified')
+                ->get()
+                ->map(function ($val) {
+                    $accred = '';
 
+                    return collect([
+                        'title' => $val->taggedPrograms->abbreviation.' '.$val->getLevelInstrument->title,
+                        'id' => $val->id
+                    ]);
+                });
+        else{
+            $results = SelfSurvey::all()->unique('accredlvl');
+            $surveys = collect([]);
+
+            foreach($results as $survey)
+            {
+                if(Accreditation::where('id', $survey->accredlvl)->whereNotNull('verified')->first())
+                    $surveys->push(
+                        SelfSurvey::where('accredlvl', $survey->accredlvl)
+                        ->latest('created_at')
+                        ->first()
+                    );
+            }
+
+            return $surveys->map(function ($val) {
+                $accred = Accreditation::where('id', $val->accredlvl)->first();
                 return collect([
-                    'title' => $val->taggedPrograms->abbreviation.' '.$val->getLevelInstrument->title,
-                    'id' => $val->id
+                    'surveyId' => $val->id,
+                    'title' => $accred->taggedPrograms->abbreviation.' '.$accred->getLevelInstrument->title,
+                    'date' => $val->created_at,
+                    'rate' => $val->rate
                 ]);
             });
+        }
+            
     }
 
     public function confirmVerified(Request $request)
@@ -344,6 +370,135 @@ class AccreditationController extends Controller
             return back()->with('error', 'Failed to unverify');
         }
     }
+
+    public function accred_ratings($id = null) {
+        $area_survey = SelfSurveyRate::where('surveyId', $id)
+            ->get(['instrumentId', 'areaId', 'rate', 'parent'])
+            ->filter(function ($value) {
+                $inst = $value->getInstrument;
+                if($inst->category == 'area')
+                    return $value;
+            })->map(function ($value) {
+                $inst = $value->getInstrument;
+                return collect([
+                    'instrumentId' => $inst->id,
+                    'title' => $inst->title,
+                    'description' => $inst->description,
+                    'rate' => trim($value->rate),
+                    'parent' => $value->parent,
+                ]);
+            });
+        
+        $survey = SelfSurveyRate::where('surveyId', $id)
+        ->get(['instrumentId', 'areaId', 'rate', 'parent']);
+
+        function buildTree($data, $parentId = null)
+        {
+            $tree = collect([]);
+
+            foreach ($data as $item) {
+                if ($item->parent == $parentId) {
+                    $children = buildTree($data, $item['instrumentId']);
+                    $res = null;
+                    if ($children) {
+                        $instrument = Instrument::where('id', $item['instrumentId'])->first();
+                        $res = collect([
+                            'instrumentId' => $item['instrumentId'],
+                            'title' => $instrument['title'],
+                            'description' => $instrument['description'],
+                            'rate' => trim($item['rate']),
+                            'parent' => $item['parent'],
+                            'children' => $children
+                        ]);
+                    }
+                    $tree->push($res);
+                }
+            }
+
+            return $tree;
+        }
+
+        return $area_survey->map(function ($value) use ($survey) {
+            return collect([
+                'instrumentId' => $value['instrumentId'],
+                'title' => $value['title'],
+                'description' => $value['description'],
+                'rate' => trim($value['rate']),
+                'parent' => $value['parent'],
+                'children' => buildTree($survey, $value['instrumentId'])
+            ]);
+        });
+
+
+        /* Global $instruments;
+        $instruments = collect([...$survey]);
+
+        function getChildrens($parentId) {
+            global $instruments;
+            $child = SelfSurveyRate::where('parent', $parentId)->get();
+
+            if($child->count() > 0) {
+                foreach ($child as $key => $value) {
+                    $inst = Instrument::where('id', $value->instrumentId)->first();
+                    $instruments->push(collect([
+                        'instrumentId' => $inst->id,
+                        'title' => $inst->title,
+                        'description' => $inst->description,
+                        'rate' => $value->rate,
+                        'parent' => $value->parent,
+                        'children' => []
+                    ]));
+                    getChildrens($value->id);
+                }
+            }
+        }
+
+        foreach ($survey as $key => $value) {
+            $child = SelfSurveyRate::where('parent', $value->instrumentId)->get();
+
+
+        }
+ */
+       /*  foreach ($survey as $key => $value){
+            $inst = 
+        } */
+
+        /* function getChilderen () {
+
+        } */
+
+        /* foreach ($survey as $key => $value) {
+            $inst = Instrument::where('id', $value['instrumentId'])->first(['id', 'title', 'description', 'parent', 'category']); 
+            $inst->rate = $value['rate']?trim($value['rate']):null;
+
+            if($inst->category == 'area')
+            {
+                collect([
+                    'id' => $inst->id,
+                    'title' => $inst['title'],
+                    'description' => $inst['description'],
+                    'parent' => $inst['parent'],
+                    'rate' => $value['rate']
+                ]);
+            }
+
+            $accreds->push($inst); 
+        } */
+
+        function getChildren () {}
+
+
+        //return $accreds;  
+    }
+
+    /* 
+        collect([
+                    'title' => $inst['title'],
+                    'description' => $inst['description'],
+                    'parent' => $inst['parent'],
+                    'rate' => $value['rate']
+                ])
+    */
 
     function saveRates($accred)
     {

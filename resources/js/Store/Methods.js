@@ -134,9 +134,9 @@ const K_means = (mean, dataset, maxIteration = 100) => {
     function meanCluster(clusters) {
         let initialized = {};
 
-        clusters.map(mean => {
-            initialized[mean] = [];
-        })
+        for (let mean in clusters) {
+            initialized[clusters[mean]] = [];
+        }
 
         //console.log(initialized)
         return initialized;

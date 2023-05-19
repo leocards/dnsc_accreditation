@@ -179,6 +179,38 @@ class DashboardController extends Controller
         }
     }
 
+    function collectIndicators ($val, $surveyId) {
+        
+
+
+        collect([
+            'id' => $val['id'],
+            'title' => $val['title'],
+            'description' => $val['description'],
+            'indicators' => collect([
+                ...SelfSurveyRate::where('surveyId', $surveyId)
+                ->where('areaId', $val['id'])
+                ->whereNotNull('parent')
+                ->get(['instrumentId', 'areaId', 'rate'])
+                ->map(function ($val) {
+                    $inst = $val->getInstrument->only(['id', 'title', 'description', 'category']);
+                    return collect([
+                        'id' => $inst['id'],
+                        'title' => $inst['title'],
+                        'description' => $inst['description'],
+                        'area' => $val->areaId,
+                        'rate' => $val->rate,
+                        'category' => $inst['category'],
+                    ]);
+                })
+                ->filter(function ($filter) {
+                    if($filter['category'] == 'item')
+                        return $filter;
+                })
+            ])
+        ]);
+    }
+
     function updateAnounce (Request $request)
     {
         return DB::transaction(function () use ($request) {

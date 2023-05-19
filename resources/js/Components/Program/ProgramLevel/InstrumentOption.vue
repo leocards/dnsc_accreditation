@@ -25,10 +25,19 @@
                 <div class=""><AssignIcon/></div>
                <div>Assign member</div>
             </li>
+            <li
+                class="px-2 py-2 flex items-center gap-2.5 hover:bg-black/10 dark:hover:bg-white/20 transition_300" 
+                v-if="isItem && isTask"
+                @click="$emit('handleEvidence')"
+            >
+                <div class=""><EditIcon/></div>
+               <div>Evidences to attach</div>
+            </li>
         </ul>
     </div>
 </template>
 <script setup>
+import EditIcon from '../../Icons/editIcon.vue'
 import InfoIcon from '../../Icons/infoIcon.vue'
 import DocumentIcon from '../../Icons/documentIcon.vue'
 import AssignIcon from '../../Icons/assignIcon.vue'
@@ -40,7 +49,11 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    isTask: {
+        type: Boolean,
+        default: false
+    }
 })
-const emits = defineEmits(['handleDocument', 'handleAssign', 'handleInfo'])
+const emits = defineEmits(['handleDocument', 'handleAssign', 'handleInfo', 'handleEvidence'])
 
 </script>

@@ -243,6 +243,19 @@ class InstrumentController extends Controller
         }
     }
 
+    public function editEvidence (Request $request) {
+        try {
+
+            DB::transaction(function () use ($request) {
+                Instrument::where('id', $request->id)->update(['attachment'=>$request->evidence_to_attach]);
+            });
+            return back();
+
+        } catch (\Throwable $th) {
+
+        }
+    }
+
     function checkInstrument($inst)
     {
         return $inst?Instrument::find($inst)->category:null;

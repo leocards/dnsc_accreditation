@@ -27,12 +27,14 @@
                         <MoreH title="More" StyleMoreMenu="hover:bg-black/10" @click="openOptions = true"/>
                         <Options 
                             v-if="openOptions" 
+                            :isTask="true"
                             :isItem="inst.category == 'item'" 
                             :isParameter="inst.category == 'param' || inst.category == 'item'"
                             :isAssign="(myMethod.role($page.props.areaRole) ?true : false)"
                             @handleDocument="getDocument(inst)"
                             @handleAssign="handleAssign(inst)"
                             @handleInfo="getInstrumentInfo(inst)"
+                            @handleEvidence="getEvidence(inst)"
                         />
                     </div>
                 </div>
@@ -61,6 +63,7 @@
                     @handleSelect="getSelected" 
                     @handleComment="getComment"  
                     @handleAssign="handleAssign"
+                    @handleEvidence="getEvidence"
                     @handleDocument="getDocument"
                     @handleInfo="getInstrumentInfo"
                     @handleResetSelect="resetSelected"
@@ -101,7 +104,8 @@ const emits = defineEmits([
     'handleResetSelect',
     'resetItem',
     'handleMarkComplete',
-    'handleInfo'
+    'handleInfo',
+    'handleEvidence'
 ])
 
 const openOptions = ref(false)
@@ -147,6 +151,12 @@ const toggleMarkComplete = (inst, bool) => {
 }
 const getInstrumentInfo = inst => {
     emits('handleInfo', inst)
+    setTimeout(()=>{
+        closeOptions()
+    }, 1)
+}
+const getEvidence = inst => {
+    emits('handleEvidence', inst)
     setTimeout(()=>{
         closeOptions()
     }, 1)

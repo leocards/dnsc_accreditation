@@ -10,7 +10,10 @@
                 </button>
             </div>
 
-            <div class="w-full pl-2 py-2" v-if="myMethod.ifArray(accreds, '==', 0)">
+            <div class="w-full pl-2 py-2" v-if="myMethod.ifArray(accreds, '==', 0) && verified">
+                No verified ratings
+            </div>
+            <div class="w-full pl-2 py-2" v-if="myMethod.ifArray(accreds, '==', 0) && !verified">
                 Nothing to verify
             </div>
 
@@ -27,6 +30,13 @@ import { ref } from "@vue/reactivity";
 import axios from "axios";
 import myMethod from '../../Store/Methods'
 
+const props = defineProps({
+    verified: {
+        type: Boolean,
+        default: false
+    }
+})
+
 const emits = defineEmits([
     'handleViewRates'
 ])
@@ -34,11 +44,16 @@ const emits = defineEmits([
 const accreds = ref(null)
 
 try{
-
-    axios.get('/unverified')
-    .then(res => {
-        accreds.value = res.data
-    })
+    if(!props.verified)
+        axios.get('/unverified')
+        .then(res => {
+            accreds.value = res.data
+        })
+    else
+        axios.get('/verified?verified=true')
+        .then(res => {
+            accreds.value = res.data
+        })
 
 } catch (e) {
 

@@ -112,10 +112,24 @@ function findBestPractices(clustered){
     return cluster;
 }
 
+const getUniqueMean = (data) => {
+    let means = [data[0]]
+
+    for (let i = 1; i < data.length; i++) {
+        if (means.length == 3) {
+            break
+        } else if (!means.includes(data[i])) {
+            means.push(data[i])
+        }
+    }
+
+    return means
+}
+
 const getCluster = data => {
     try {
         const dataset = ref(data)
-        const initalCentroids = ref([dataset.value[1], dataset.value[2], dataset.value[3]])
+        const initalCentroids = ref(getUniqueMean(data)) 
 
         if(dataset.value == null || dataset.value.length == 0)
             throw new Error('Empty data')
@@ -191,6 +205,8 @@ const getAreaIndicators = async inst => {
 
         //generate cluster
         resultClus.value = await getCluster(mapRates(inst))
+/* 
+        console.log('mean', resultClus.value) */
         
         if(!resultClus.value.result || resultClus.value.result.length < 3)
             throw new Error('Empty data or not enough data to cluster')

@@ -10,8 +10,8 @@
             <Back @click="routeBackHome($page.props.home)" title="Back" />
             <Crumbs :crumbs="[]" :current="$page.props.area" class="pointer-events-none" />
             <Upload 
-                title="Upload" 
-                :disabled="(!selected?'':selected.category != 'item')" 
+                title="Upload"
+                :disabled="(!selected?'':selected.category != 'item')"
                 @click="isUpload = true"
             />
         </div>
@@ -28,6 +28,7 @@
                     @resetItem="setResetLocation"
                     @handleSelect="getSelect"
                     @handleAssign="assignMember"
+                    @handleEvidence="showEvidenceToEdit"
                     @handleInfo="getInstrumentInfo"
                     @handleDocument="showDocument"
                     @handleResetSelect="resetSelected"
@@ -117,6 +118,12 @@
         @handle-close="storeDocument.evidenceAttach.showModal = false"
     />
 
+    <EditIndicator 
+        :inst="selectedIndicatorToEdit"
+        v-if="selectedIndicatorToEdit"
+        @handleClose="selectedIndicatorToEdit = null"
+    />
+
 </Layout>
 <input type="hidden" :value="setLocation($page.props.location??[])">
 </template>
@@ -128,6 +135,7 @@ import Crumbs from '../Components/BreadCrumbs.vue'
 import Upload from '../Components/Buttons/Upload.vue'
 import ShareModal from '../Components/Document/Share.vue'
 import TaskAccordion from '../Components/Task/TaskAccordion.vue'
+import EditIndicator from '../Components/Instrument/EditIndicator.vue'
 import InstrumentAside from '../Components/Instrument/InstrumentAside.vue'
 import AttatchToEvidenceModal from '../Components/Document/AttachToEvidence.vue'
 import RemoveCompleteModal from '../Components/Task/TaskPage/RemoveComplete.vue'
@@ -165,6 +173,11 @@ const isManageVersion = ref(false)
 const isUnmarkComplete = ref(false)
 const isInstrumentInfo = ref(false)
 const accordionContainer = ref(null)
+const selectedIndicatorToEdit = ref(null)
+
+const showEvidenceToEdit = inst => {
+    selectedIndicatorToEdit.value = inst
+}
 
 const role = role => {
     return role ? 'Task Force Chairperson' : null

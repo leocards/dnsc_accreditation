@@ -74,6 +74,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/accreditation/tagged/{id}', 'programTagged');
             Route::get('/accreditation/mark_as_complete_self_survey/{accred}', 'markAsCompleteSelfSurvey');
             Route::get('/unverified', 'unverified_accred');
+            Route::get('/verified', 'unverified_accred');//
+            Route::get('/ratings/{id?}', 'accred_ratings');//
             
             Route::post('/accreditation/create', 'tagProgram');
             Route::post('/accreditation/open_survey', 'openSurvey');
@@ -97,6 +99,10 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/accreditation/instrument/delete', 'destroy');
             Route::post('/accreditation/instrument/parameter-indicators', 'getAvailableIndicatorOfParameter');
         });
+    });
+
+    Route::controller(InstrumentController::class)->group(function () {
+        Route::post('/accreditation/editEvidence', 'editEvidence');
     });
 
     Route::controller(AccreditorController::class)->group(function () {

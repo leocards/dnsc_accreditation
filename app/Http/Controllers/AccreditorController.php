@@ -121,7 +121,7 @@ class AccreditorController extends Controller
             $rateInst = null;
             $rateInst = DB::transaction(function () use ($request) {
                 $rate = Progress::find($request->id);
-                $rate->rate = $request->rate;
+                $rate->rate = trim($request->rate);
                 $rate->save();
                 return $rate;
             });
@@ -140,7 +140,7 @@ class AccreditorController extends Controller
                         ]);
                     });
 
-                $rate = round(($childreRates->sum('rate') / $childreRates->count()), 1);
+                $rate = floor(($childreRates->sum('rate') / $childreRates->count()) * 100)/100;
 
                 $pr = Progress::where('instrumentId', $parent->id)
                     ->where('accredlvlId', $rateInst->accredlvlId)
@@ -188,7 +188,7 @@ class AccreditorController extends Controller
                     ->whereNull('exclude_rate')
                     ->get(['id', 'rate'])
                     ->map(function ($val) {
-                        $rate = is_numeric($val->rate)?$val->rate:0;
+                        $rate = is_numeric($val->rate)?trim($val->rate):0;
     
                         return collect([
                             'id' => $val->id,
@@ -196,7 +196,8 @@ class AccreditorController extends Controller
                         ]);
                     });
     
-                $rate = round(($childreRates->sum('rate') / $childreRates->count()), 1);
+                $rate = floor(($childreRates->sum('rate') / $childreRates->count()) * 100)/100;
+                
     
                 $pr = Progress::where('instrumentId', $parent->id)
                     ->where('accredlvlId', $request->accredlvlId)

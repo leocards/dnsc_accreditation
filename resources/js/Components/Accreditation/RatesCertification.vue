@@ -18,7 +18,7 @@
             </ul>
 
             <div class="flex justify-end mt-5">
-                <SubmitButton :disabled="disable" @click="confirmRates">
+                <SubmitButton @click="confirmRates">
                     Confirm
                 </SubmitButton>
             </div>

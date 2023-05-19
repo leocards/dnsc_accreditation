@@ -20,7 +20,13 @@
                 <div class="ml-auto relative" v-if="$page.props.user.auth == 6" v-click-outside="closeViewRates">
                     <button 
                         class="mr-2 rounded h-9 hover:bg-dnscGreen bg-dnscGreen/90 px-3 text-white transition_300 dark:shadow-[inset_0_1px_0_0_hsl(0deg_0%_100%_/_5%)]"
-                        @click="isViewRates = !isViewRates"
+                        @click="isViewRatesVerified = !isViewRatesVerified, isViewRates = false"
+                    >
+                        View verified
+                    </button>
+                    <button 
+                        class="mr-2 rounded h-9 hover:bg-dnscGreen bg-dnscGreen/90 px-3 text-white transition_300 dark:shadow-[inset_0_1px_0_0_hsl(0deg_0%_100%_/_5%)]"
+                        @click="isViewRates = !isViewRates, isViewRatesVerified = false"
                     >
                         Verify Rates
                     </button>
@@ -28,6 +34,11 @@
                     <VerifyRatesList
                         v-if="isViewRates"
                         @handleViewRates="CetificationRates"
+                    />
+                    <VerifyRatesList
+                        v-if="isViewRatesVerified"
+                        @handleViewRates="VerifiedRatings"
+                        :verified="true"
                     />
                 </div>
         </div>
@@ -100,6 +111,13 @@
         v-if="isAccredInfo && selected"
         @handleClose="isAccredInfo = false"
     />
+
+    <RateViewing
+        v-if="isShowVerifiedRates.open"
+        @close="isShowVerifiedRates.reset()"
+        :id="isShowVerifiedRates.id"
+        :accreds="isShowVerifiedRates.accred"
+    ></RateViewing>
 </Layout>
 </template>
 
@@ -109,6 +127,7 @@ import InfoButton from '../Components/Buttons/Info.vue'
 import Card from '../Components/Accreditation/Card.vue'
 import SurveyButton from '../Components/Buttons/Survey.vue'
 import NavTabs from '../Components/Accreditation/NavTab.vue'
+import RateViewing from '../Components/Accreditation/RateViewing.vue'
 import InfoModal from '../Components/Accreditation/InfoModal.vue'
 import SurveyModal from '../Components/Accreditation/SurveyModal.vue'
 import PreliminaryButton from '../Components/Buttons/PreliminaryButton.vue'
@@ -117,6 +136,7 @@ import RatesCertification from '../Components/Accreditation/RatesCertification.v
 import myMethod from '../Store/Methods'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import { useForm } from '@inertiajs/inertia-vue3'
 
 const props = defineProps({
     user: Object
@@ -132,6 +152,12 @@ const isAccredInfo = ref(false)
 const selfSurveyDue = ref(null)
 const accreditations = ref(null)
 const actualSurveyDue = ref(null)
+const isViewRatesVerified = ref(false)
+const isShowVerifiedRates = useForm({
+    open: false,
+    id: null,
+    accred: null
+})
 
 const closeSurvey = () => {
     selected.value = null
@@ -161,6 +187,14 @@ const closeCurrentSurvey = (accred, isActual = false) => {
 
 const closeViewRates = () => {
     isViewRates.value = false
+    isViewRatesVerified.value = false
+}
+
+const VerifiedRatings = accred => {
+    isShowVerifiedRates.open = true
+    isShowVerifiedRates.id = accred.surveyId
+    isShowVerifiedRates.accred = accred
+    closeViewRates()
 }
 
 const CetificationRates = accred => {
