@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -123,48 +124,6 @@ class DashboardController extends Controller
         }
     }
 
-    public function area_indicators($surveyId)
-    {
-        try {
-
-            $areas = SelfSurveyRate::where('surveyId', $surveyId)
-                ->whereNull('parent')
-                ->get()
-                ->map(function ($area) use ($surveyId) {
-                    $val = $area->getInstrument->only(['id', 'title', 'description']);
-                    return collect([
-                        'id' => $val['id'],
-                        'title' => $val['title'],
-                        'description' => $val['description'],
-                        'indicators' => collect([
-                            ...SelfSurveyRate::where('surveyId', $surveyId)
-                            ->where('areaId', $val['id'])
-                            ->whereNotNull('parent')
-                            ->get(['instrumentId', 'areaId', 'rate'])
-                            ->map(function ($val) {
-                                $inst = $val->getInstrument->only(['id', 'title', 'description', 'category']);
-                                return collect([
-                                    'id' => $inst['id'],
-                                    'title' => $inst['title'],
-                                    'description' => $inst['description'],
-                                    'area' => $val->areaId,
-                                    'rate' => $val->rate,
-                                    'category' => $inst['category'],
-                                ]);
-                            })
-                            ->filter(function ($filter) {
-                                if($filter['category'] == 'item')
-                                    return $filter;
-                            })
-                        ])
-                    ]);
-                });
-            return response()->json($areas);
-        } catch (\Throwable $th) {
-            return response()->json($th->getMessage(), 400);
-        }
-    }
-
     public function removeAnnounce(Request $request)
     {
         try {
@@ -179,36 +138,84 @@ class DashboardController extends Controller
         }
     }
 
-    function collectIndicators ($val, $surveyId) {
-        
+    public function getLevelAreas($surveyId)
+    {
+        try {
+            $areas = SelfSurveyRate::where('surveyId', $surveyId)
+            ->whereNull('parent')
+            ->get(['instrumentId', 'areaId', 'parent', 'rate'])
+            ->map(function ($area) use ($surveyId) {
+                $val = $area->getInstrument->only(['id', 'title', 'description']);
+                return collect([
+                    'id' => $val['id'],
+                    'title' => $val['title'],
+                    'description' => $val['description'],
+                    'indicators' => collect([...$this->collectIndicators($val['id'], $surveyId)])
+                ]);
+            });
 
+            $indicatorRates = collect([]);
 
-        collect([
-            'id' => $val['id'],
-            'title' => $val['title'],
-            'description' => $val['description'],
-            'indicators' => collect([
-                ...SelfSurveyRate::where('surveyId', $surveyId)
-                ->where('areaId', $val['id'])
-                ->whereNotNull('parent')
-                ->get(['instrumentId', 'areaId', 'rate'])
-                ->map(function ($val) {
-                    $inst = $val->getInstrument->only(['id', 'title', 'description', 'category']);
-                    return collect([
-                        'id' => $inst['id'],
-                        'title' => $inst['title'],
-                        'description' => $inst['description'],
-                        'area' => $val->areaId,
-                        'rate' => $val->rate,
-                        'category' => $inst['category'],
-                    ]);
-                })
-                ->filter(function ($filter) {
-                    if($filter['category'] == 'item')
-                        return $filter;
-                })
-            ])
-        ]);
+            foreach ($areas as $key => $value) {
+                $arrRate = array_map(function ($val) {
+                    return floatval($val);
+                }, array_filter($value['indicators']->pluck('rate')->all(), 'is_numeric'));
+
+                $vals = collect([
+                    'area' => $value['id'],
+                    'ind' => $arrRate,
+                    'isCluster' => count($arrRate) > 3?true:false
+                ]);
+
+                $indicatorRates->push($vals);
+            }
+
+            return response()->json(['areas'=>$areas, 'rates'=>$indicatorRates]);
+        }catch (\Throwable $th) {
+            return response()->json($th->getMessage(), 400);
+        }
+    }
+
+    public function Rcommand(Request $request){
+
+        $escapedN = str_replace('"', '\"', $request->clus); // Escape any special characters in the JSON string
+        $quotedN = '"' . $escapedN . '"'; // Enclose the JSON string in double quotes
+        //echo $quotedN;
+        $command = "\"C:\Program Files\R\R-4.3.0\bin\Rscript.exe\" C:\\xampp\\htdocs\\CKmeans1D.R $quotedN";
+        exec($command, $output);
+
+        return response()->json(json_decode($output[0], true));
+    }
+
+    function collectIndicators ($area, $surveyId) {
+        $ind = collect([...SelfSurveyRate::where('surveyId', $surveyId)
+        ->where('areaId', $area)
+        ->whereNotNull('parent')
+        ->get(['instrumentId', 'areaId', 'rate'])
+        ->map(function ($val) {
+            $inst = $val->getInstrument->only(['id', 'title', 'description', 'category', 'parent']);
+            return collect([
+                'id' => $inst['id'],
+                'title' => $inst['title'],
+                'description' => $inst['description'],
+                'area' => $val->areaId,
+                'rate' => trim($val->rate),
+                'parent' => $inst['parent'],
+                'category' => $inst['category'],
+            ]);
+        })->filter(function ($filter) {
+            if($filter['category'] == 'item')
+                return $filter;
+        })]);
+
+        foreach ($ind as $key => $value) {
+            foreach($ind as $key2 => $value2) {
+                if($value['id'] == $value2['parent']) 
+                    $ind->forget($key2);
+            }
+        }
+
+        return $ind;
     }
 
     function updateAnounce (Request $request)

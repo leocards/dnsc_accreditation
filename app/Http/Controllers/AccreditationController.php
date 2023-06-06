@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Accreditation;
+use App\Models\AreaSelfAccreditor;
 use App\Models\Instrument;
 use App\Models\Progress;
 use App\Models\SelfSurvey;
@@ -248,7 +249,7 @@ class AccreditationController extends Controller
 
             foreach($results as $survey)
             {
-                if(Accreditation::where('id', $survey->accredlvl)->whereNotNull('verified')->first())
+                //if(Accreditation::where('id', $survey->accredlvl)->whereNotNull('verified')->first())
                     $surveys->push(
                         SelfSurvey::where('accredlvl', $survey->accredlvl)
                         ->latest('created_at')
@@ -383,6 +384,7 @@ class AccreditationController extends Controller
                 return collect([
                     'instrumentId' => $inst->id,
                     'title' => $inst->title,
+                    'category' => $inst->category,
                     'description' => $inst->description,
                     'rate' => trim($value->rate),
                     'parent' => $value->parent,
@@ -405,6 +407,7 @@ class AccreditationController extends Controller
                         $res = collect([
                             'instrumentId' => $item['instrumentId'],
                             'title' => $instrument['title'],
+                            'category' => $instrument['category'],
                             'description' => $instrument['description'],
                             'rate' => trim($item['rate']),
                             'parent' => $item['parent'],
@@ -422,83 +425,90 @@ class AccreditationController extends Controller
             return collect([
                 'instrumentId' => $value['instrumentId'],
                 'title' => $value['title'],
+                'category' => $value['category'],
                 'description' => $value['description'],
                 'rate' => trim($value['rate']),
                 'parent' => $value['parent'],
                 'children' => buildTree($survey, $value['instrumentId'])
             ]);
         });
-
-
-        /* Global $instruments;
-        $instruments = collect([...$survey]);
-
-        function getChildrens($parentId) {
-            global $instruments;
-            $child = SelfSurveyRate::where('parent', $parentId)->get();
-
-            if($child->count() > 0) {
-                foreach ($child as $key => $value) {
-                    $inst = Instrument::where('id', $value->instrumentId)->first();
-                    $instruments->push(collect([
-                        'instrumentId' => $inst->id,
-                        'title' => $inst->title,
-                        'description' => $inst->description,
-                        'rate' => $value->rate,
-                        'parent' => $value->parent,
-                        'children' => []
-                    ]));
-                    getChildrens($value->id);
-                }
-            }
-        }
-
-        foreach ($survey as $key => $value) {
-            $child = SelfSurveyRate::where('parent', $value->instrumentId)->get();
-
-
-        }
- */
-       /*  foreach ($survey as $key => $value){
-            $inst = 
-        } */
-
-        /* function getChilderen () {
-
-        } */
-
-        /* foreach ($survey as $key => $value) {
-            $inst = Instrument::where('id', $value['instrumentId'])->first(['id', 'title', 'description', 'parent', 'category']); 
-            $inst->rate = $value['rate']?trim($value['rate']):null;
-
-            if($inst->category == 'area')
-            {
-                collect([
-                    'id' => $inst->id,
-                    'title' => $inst['title'],
-                    'description' => $inst['description'],
-                    'parent' => $inst['parent'],
-                    'rate' => $value['rate']
-                ]);
-            }
-
-            $accreds->push($inst); 
-        } */
-
-        function getChildren () {}
-
-
-        //return $accreds;  
     }
 
-    /* 
-        collect([
-                    'title' => $inst['title'],
-                    'description' => $inst['description'],
-                    'parent' => $inst['parent'],
-                    'rate' => $value['rate']
-                ])
-    */
+    public function print_rates($id, $surveyId) {
+        $area_survey = SelfSurveyRate::where('surveyId', $surveyId)
+            ->where('instrumentId', $id)
+            ->get(['instrumentId', 'areaId', 'rate', 'parent'])
+            ->filter(function ($value) {
+                $inst = $value->getInstrument;
+                if($inst->category == 'area')
+                    return $value;
+            })->map(function ($value) {
+                $inst = $value->getInstrument;
+                return collect([
+                    'instrumentId' => $inst->id,
+                    'title' => $inst->title,
+                    'category' => $inst->category,
+                    'description' => $inst->description,
+                    'rate' => trim($value->rate),
+                    'parent' => $value->parent,
+                ]);
+            });
+        
+        $survey = SelfSurveyRate::where('surveyId', $surveyId)
+        ->get(['instrumentId', 'areaId', 'rate', 'parent']);
+
+        function buildTrees($data, $parentId = null)
+        {
+            $tree = collect([]);
+
+            foreach ($data as $item) {
+                if ($item->parent == $parentId) {
+                    $children = buildTrees($data, $item['instrumentId']);
+                    $res = null;
+                    if ($children) {
+                        $instrument = Instrument::where('id', $item['instrumentId'])->first();
+                        $res = collect([
+                            'instrumentId' => $item['instrumentId'],
+                            'title' => $instrument['title'],
+                            'category' => $instrument['category'],
+                            'description' => $instrument['description'],
+                            'rate' => trim($item['rate']),
+                            'parent' => $item['parent'],
+                            'children' => $children
+                        ]);
+                    }
+                    $tree->push($res);
+                }
+            }
+
+            return $tree;
+        }
+
+        $collects = $area_survey->map(function ($value) use ($survey) {
+            return collect([
+                'instrumentId' => $value['instrumentId'],
+                'title' => $value['title'],
+                'category' => $value['category'],
+                'description' => $value['description'],
+                'rate' => trim($value['rate']),
+                'parent' => $value['parent'],
+                'children' => buildTrees($survey, $value['instrumentId'])
+            ]);
+        });
+
+        $accredLvl = SelfSurvey::find($surveyId);
+        $self_accreditors = AreaSelfAccreditor::where('instrumentId',$id)
+            ->where('accredlvl',$accredLvl->accredlvl)
+            ->get(['userId'])
+            ->map(function ($value) {
+                $user = $value->selfAccreditor;
+                return collect([
+                    'user' => $user->first_name.' '.$user->last_name
+                ]);
+            });
+            
+        return Inertia::render('PrintingPage', ['id'=>intval($id), 'area'=>$collects, 'self_accreditors'=>$self_accreditors]);
+    }
 
     function saveRates($accred)
     {

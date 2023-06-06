@@ -38,10 +38,14 @@
 import { ref } from 'vue';
 
 const props = defineProps({
-    inst: Object
+    inst: Object,
+    view: {
+        type: Boolean,
+        default: false
+    }
 })
 
-const showSubs = ref(props.inst.children.length == 0?false:true)
+const showSubs = ref(props.inst.children.length == 0?false:props.view)
 
 
 </script>

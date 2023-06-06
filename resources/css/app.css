@@ -116,7 +116,7 @@
         @apply formInput_error py-2 min-h-[4rem] max-h-[9rem] dark:bg-secondaryDarkBg
     }
     .subnavBg {
-        @apply bg-white dark:bg-secondaryDarkBg
+        @apply bg-white dark:bg-secondaryDarkBg print:hidden
     }
 
     .editable:empty:before{

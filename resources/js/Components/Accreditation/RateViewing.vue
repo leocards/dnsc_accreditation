@@ -12,6 +12,10 @@ const props = defineProps({
 
 const accred = ref(null) 
 
+const print = (id) => {
+    window.open('/print/'+id+'/'+props.accreds.surveyId, '_blank')
+}
+
 try {
 
     axios.get('/ratings/'+props.id)
@@ -32,14 +36,17 @@ try {
             {{ accreds.title }} <span class="ml-auto"> rate: {{ accreds.rate }} </span>
         </div>
 
-        <div class="max-h-[75vh] overflow-y-auto" v-if="accred">
-            <div class="mb-2" v-for="(item, index) in accred">
-                <VerifiedAccord :key="index" :inst="item" v-if="accred" />
+        <div class="max-h-[70vh] overflow-y-auto"  id="printableContent" v-if="accred">
+            <div class="mb-4" v-for="(item, index) in accred">
+                <div class="flex px-3"><button @click="print(item.instrumentId)" class="ml-auto bg-gray-100 p-1 px-2 rounded mb-1">Print area</button></div>
+                <VerifiedAccord :view="true" :key="index" :inst="item" v-if="accred" />
             </div>
         </div>
 
         <div class="w-full flex justify-center" v-else>
             <Loading />
         </div>
+
+
     </Modal>
 </template>

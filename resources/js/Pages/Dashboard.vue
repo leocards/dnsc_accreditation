@@ -74,7 +74,7 @@ try {
         announcements.value = res.data
     })
 } catch (e) {
-
+    console.log(e)
 }
 
 </script>

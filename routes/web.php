@@ -76,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/unverified', 'unverified_accred');
             Route::get('/verified', 'unverified_accred');//
             Route::get('/ratings/{id?}', 'accred_ratings');//
+            Route::get('/print/{id}/{surveyId}', 'print_rates');//
             
             Route::post('/accreditation/create', 'tagProgram');
             Route::post('/accreditation/open_survey', 'openSurvey');
@@ -131,7 +132,9 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard')->middleware('authUser');
         Route::get('/data_to_cluster/{surveyId}', 'area_indicators');
+        Route::get('/getLevelAreas/{surveyId}', 'getLevelAreas');
         
+        Route::post('/getR', 'Rcommand');
         Route::post('/announcements', 'announcement');
         Route::post('/dashboard/remove_announce', 'removeAnnounce');
         Route::post('/announcement/new', 'addAnnounce')->middleware('admin');
