@@ -14,7 +14,7 @@ The system features:
 
 ## Installation
 
-1. Close the directory
+1. Clone the directory
 2. Navigate to the project directory
 3. Run composer install
 4. npm install
