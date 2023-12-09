@@ -16,7 +16,7 @@ The system features:
 
 1. Clone the directory
 2. Navigate to the project directory
-3. Run composer install
+3. Run composer install ( make sure to have composer installed on your computer )
 4. npm install
 5. php artisan migrate ( after running this command, type yes to create the database)
 6. php artisan seed
